@@ -334,7 +334,11 @@
 				}
 			} else {
 				this.placeholder.addClass(o.errorClass);
-				this.beyondMaxLevels = (levels - o.maxLevels) > 0 ? levels - o.maxLevels : 1;
+				if (o.maxLevels < levels && o.maxLevels != 0) {
+					this.beyondMaxLevels = levels - o.maxLevels;
+				} else {
+					this.beyondMaxLevels = 1;
+				}
 			}
 		}
 
