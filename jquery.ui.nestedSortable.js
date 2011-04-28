@@ -131,6 +131,7 @@
 
 			this.beyondMaxLevels = 0;
 
+			$(this.placeholder[0]).html('level ' + level + ', child levels ' + childLevels);
 			// If the item is moved to the left, send it to its parent level
 			if (parentItem != null && this.positionAbs.left < parentItem.offset().left) {
 				parentItem.after(this.placeholder[0]);
@@ -168,12 +169,20 @@
 
 			// If the item is in a position not allowed, send it back
 			if (this.beyondMaxLevels) {
-				var parent = this.placeholder[0].parentNode.parentNode;
-				for (var i = this.beyondMaxLevels-1; i > 0; i--) {
-					parent = parent.parentNode.parentNode;
+				var placeholder_element = $(this.placeholder[0]);
+				var parent = placeholder_element.parent().closest('li');
+
+				for (var i = this.beyondMaxLevels - 1; i > 0; i--) {
+					parent = parent.parent().closest('li');
+
 				}
+				
 				this.placeholder.removeClass(this.options.errorClass);
-				$(parent).after(this.placeholder[0]);
+				if(!parent.attr('tagName') || parent.attr('tagName').toLowerCase() != 'li') {
+					parent = placeholder_element.parents('li').last();
+				}
+				parent.after(placeholder_element);
+			
 				this._trigger("change", event, this._uiHash());
 			}
 
@@ -313,12 +322,19 @@
 
 				return level;
 		},
+		
+		_getChildLevels: function(parent, depth) {
+			var self = this;
+			var result = 0;
+			var depth = depth || 0;
+			
+			$(parent).children('ol').children(this.options.items).each(
+				function(index, child) {
+					result = Math.max(self._getChildLevels(child, depth + 1), result);
+				}
+			);
 
-		_getChildLevels: function(item) {
-
-				levels = item.find(this.options.items).filter(this.options.items+':first-child').length;
-
-				return levels;
+			return depth ? result + 1 : result;
 		},
 
 		_isAllowed: function(parentItem, levels) {
@@ -341,5 +357,4 @@
 	}));
 
 	$.ui.nestedSortable.prototype.options = $.extend({}, $.ui.sortable.prototype.options, $.ui.nestedSortable.prototype.options);
-
 })(jQuery);
