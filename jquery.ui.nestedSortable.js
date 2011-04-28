@@ -168,20 +168,14 @@
 
 			// If the item is in a position not allowed, send it back
 			if (this.beyondMaxLevels) {
-				var placeholder_element = $(this.placeholder[0]);
-				var parent = placeholder_element.parent().closest('li');
-
+				var parent = this.placeholder.parent().closest(this.options.items);
+				
 				for (var i = this.beyondMaxLevels - 1; i > 0; i--) {
-					parent = parent.parent().closest('li');
-
+					parent = parent.parent().closest(this.options.items);
 				}
 
 				this.placeholder.removeClass(this.options.errorClass);
-				if(!parent.attr('tagName') || parent.attr('tagName').toLowerCase() != 'li') {
-					parent = placeholder_element.parents('li').last();
-				}
-				parent.after(placeholder_element);
-
+				parent.after(this.placeholder);
 				this._trigger("change", event, this._uiHash());
 			}
 
