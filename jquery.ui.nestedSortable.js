@@ -168,12 +168,14 @@
 
 			// If the item is in a position not allowed, send it back
 			if (this.beyondMaxLevels) {
-				var parent = this.placeholder[0].parentNode.parentNode;
-				for (var i = this.beyondMaxLevels-1; i > 0; i--) {
-					parent = parent.parentNode.parentNode;
+				var parent = this.placeholder.parent().closest(this.options.items);
+				
+				for (var i = this.beyondMaxLevels - 1; i > 0; i--) {
+					parent = parent.parent().closest(this.options.items);
 				}
+
 				this.placeholder.removeClass(this.options.errorClass);
-				$(parent).after(this.placeholder[0]);
+				parent.after(this.placeholder);
 				this._trigger("change", event, this._uiHash());
 			}
 
@@ -219,7 +221,7 @@
 					var item = {"id" : id[2]};
 					if ($(li).children(o.listType).children('li').length > 0) {
 						item.children = [];
-						$(li).children(o.listType).children('li').each(function() {
+						$(li).children(o.listType).children('li').each(function () {
 							var level = _recursiveItems($(this));
 							item.children.push(level);
 						});
@@ -238,7 +240,7 @@
 
 			ret.push({"item_id": 'root', "parent_id": 'none', "depth": sDepth, "left": '1', "right": ($('li', this.element).length + 1) * 2});
 
-			$(this.element).children('li').each(function() {
+			$(this.element).children('li').each(function () {
 				left = _recursiveArray(this, sDepth + 1, left);
 			});
 
@@ -255,7 +257,7 @@
 
 				if ($(item).children(o.listType).children('li').length > 0) {
 					depth ++;
-					$(item).children(o.listType).children('li').each(function() {
+					$(item).children(o.listType).children('li').each(function () {
 						right = _recursiveArray($(this), depth, right);
 					});
 					depth --;
@@ -301,24 +303,30 @@
 
 		_getLevel: function(item) {
 
-				var level = 1;
+			var level = 1;
 
-				if (this.options.listType) {
-						var list = item.closest(this.options.listType);
-						while (!list.is('.ui-sortable')/* && level < this.options.maxLevels*/) {
-								level++;
-								list = list.parent().closest(this.options.listType);
-						}
-				}
+			if (this.options.listType) {
+					var list = item.closest(this.options.listType);
+					while (!list.is('.ui-sortable')/* && level < this.options.maxLevels*/) {
+							level++;
+							list = list.parent().closest(this.options.listType);
+					}
+			}
 
-				return level;
+			return level;
 		},
 
-		_getChildLevels: function(item) {
+		_getChildLevels: function(parent, depth) {
+			var self = this,
+			    o = this.options,
+			    result = 0;
+			depth = depth || 0;
 
-				levels = item.find(this.options.items).filter(this.options.items+':first-child').length;
+			$(parent).children(o.listType).children(o.items).each(function (index, child) {
+					result = Math.max(self._getChildLevels(child, depth + 1), result);
+			});
 
-				return levels;
+			return depth ? result + 1 : result;
 		},
 
 		_isAllowed: function(parentItem, levels) {
@@ -341,5 +349,4 @@
 	}));
 
 	$.ui.nestedSortable.prototype.options = $.extend({}, $.ui.sortable.prototype.options, $.ui.nestedSortable.prototype.options);
-
 })(jQuery);
