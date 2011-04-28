@@ -175,13 +175,13 @@
 					parent = parent.parent().closest('li');
 
 				}
-				
+
 				this.placeholder.removeClass(this.options.errorClass);
 				if(!parent.attr('tagName') || parent.attr('tagName').toLowerCase() != 'li') {
 					parent = placeholder_element.parents('li').last();
 				}
 				parent.after(placeholder_element);
-			
+
 				this._trigger("change", event, this._uiHash());
 			}
 
@@ -227,7 +227,7 @@
 					var item = {"id" : id[2]};
 					if ($(li).children(o.listType).children('li').length > 0) {
 						item.children = [];
-						$(li).children(o.listType).children('li').each(function() {
+						$(li).children(o.listType).children('li').each(function () {
 							var level = _recursiveItems($(this));
 							item.children.push(level);
 						});
@@ -246,7 +246,7 @@
 
 			ret.push({"item_id": 'root', "parent_id": 'none', "depth": sDepth, "left": '1', "right": ($('li', this.element).length + 1) * 2});
 
-			$(this.element).children('li').each(function() {
+			$(this.element).children('li').each(function () {
 				left = _recursiveArray(this, sDepth + 1, left);
 			});
 
@@ -263,7 +263,7 @@
 
 				if ($(item).children(o.listType).children('li').length > 0) {
 					depth ++;
-					$(item).children(o.listType).children('li').each(function() {
+					$(item).children(o.listType).children('li').each(function () {
 						right = _recursiveArray($(this), depth, right);
 					});
 					depth --;
@@ -309,29 +309,28 @@
 
 		_getLevel: function(item) {
 
-				var level = 1;
+			var level = 1;
 
-				if (this.options.listType) {
-						var list = item.closest(this.options.listType);
-						while (!list.is('.ui-sortable')/* && level < this.options.maxLevels*/) {
-								level++;
-								list = list.parent().closest(this.options.listType);
-						}
-				}
+			if (this.options.listType) {
+					var list = item.closest(this.options.listType);
+					while (!list.is('.ui-sortable')/* && level < this.options.maxLevels*/) {
+							level++;
+							list = list.parent().closest(this.options.listType);
+					}
+			}
 
-				return level;
+			return level;
 		},
-		
+
 		_getChildLevels: function(parent, depth) {
-			var self = this;
-			var result = 0;
-			var depth = depth || 0;
-			
-			$(parent).children('ol').children(this.options.items).each(
-				function(index, child) {
+			var self = this,
+			    o = this.options,
+			    result = 0;
+			depth = depth || 0;
+
+			$(parent).children(o.listType).children(o.items).each(function (index, child) {
 					result = Math.max(self._getChildLevels(child, depth + 1), result);
-				}
-			);
+			});
 
 			return depth ? result + 1 : result;
 		},
