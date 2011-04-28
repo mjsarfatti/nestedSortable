@@ -131,7 +131,6 @@
 
 			this.beyondMaxLevels = 0;
 
-			$(this.placeholder[0]).html('level ' + level + ', child levels ' + childLevels);
 			// If the item is moved to the left, send it to its parent level
 			if (parentItem != null && this.positionAbs.left < parentItem.offset().left) {
 				parentItem.after(this.placeholder[0]);
