@@ -20,6 +20,7 @@
 			errorClass: 'ui-nestedSortable-error',
 			listType: 'ol',
 			maxLevels: 0,
+			rtl: 0,
 			noJumpFix: 0
 		},
 
@@ -132,13 +133,21 @@
 			this.beyondMaxLevels = 0;
 
 			// If the item is moved to the left, send it to its parent level
-			if (parentItem != null && this.positionAbs.left < parentItem.offset().left) {
+			if (parentItem != null
+				&& (o.rtl
+				    ? this.positionAbs.right < parentItem.offset().right
+				    : this.positionAbs.left < parentItem.offset().left)
+				) {
 				parentItem.after(this.placeholder[0]);
 				this._clearEmpty(parentItem[0]);
 				this._trigger("change", event, this._uiHash());
 			}
 			// If the item is below another one and is moved to the right, make it a children of it
-			else if (previousItem != null && this.positionAbs.left > previousItem.offset().left + o.tabSize) {
+			else if (previousItem != null
+				&& (o.rtl
+				    ? this.positionAbs.right > previousItem.offset().right + o.tabSize
+				    : this.positionAbs.left > previousItem.offset().left + o.tabSize)
+				) {
 				this._isAllowed(previousItem, level+childLevels+1);
 				if (!previousItem.children(o.listType).length) {
 					previousItem[0].appendChild(newList);
@@ -169,7 +178,7 @@
 			// If the item is in a position not allowed, send it back
 			if (this.beyondMaxLevels) {
 				var parent = this.placeholder.parent().closest(this.options.items);
-				
+
 				for (var i = this.beyondMaxLevels - 1; i > 0; i--) {
 					parent = parent.parent().closest(this.options.items);
 				}
