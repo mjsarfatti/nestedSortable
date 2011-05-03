@@ -30,7 +30,12 @@
 			return $.ui.sortable.prototype._create.apply(this, arguments);
 		},
 
-
+		destroy: function() {
+			this.element
+				.removeData("nestedSortable")
+				.unbind(".nestedSortable");
+			return $.ui.sortable.prototype.destroy.apply(this, arguments);
+		},
 
 		_mouseDrag: function(event) {
 
@@ -169,7 +174,7 @@
 			// If the item is in a position not allowed, send it back
 			if (this.beyondMaxLevels) {
 				var parent = this.placeholder.parent().closest(this.options.items);
-				
+
 				for (var i = this.beyondMaxLevels - 1; i > 0; i--) {
 					parent = parent.parent().closest(this.options.items);
 				}
