@@ -142,6 +142,11 @@
 				this._isAllowed(previousItem, level+childLevels+1);
 				if (previousItem[0].children[1] == null) {
 					previousItem[0].appendChild(newList);
+          if(previousItem.attr('id')!='undefined'){
+					  newList.id = previousItem.attr('id') + '_nested_set';
+          }else{
+            newList.className = 'unnamed_nested_set'
+          }
 				}
 				previousItem[0].children[1].appendChild(this.placeholder[0]);
 				this._trigger("change", event, this._uiHash());
