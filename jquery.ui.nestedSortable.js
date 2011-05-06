@@ -20,8 +20,8 @@
 			errorClass: 'ui-nestedSortable-error',
 			listType: 'ol',
 			maxLevels: 0,
-			nearestAllowed: 0,
-			noJumpFix: 0
+			noJumpFix: 0,
+			revertOnError: 1
 		},
 
 		_create: function(){
@@ -174,9 +174,17 @@
 
 			// If the item is in a position not allowed, send it back
 			if (this.beyondMaxLevels) {
+
 				this.placeholder.removeClass(this.options.errorClass);
 
-				if (this.options.nearestAllowed) {
+				if (this.options.revertOnError) {
+					if (this.domPosition.prev) {
+						$(this.domPosition.prev).after(this.placeholder);
+					} else {
+						$(this.domPosition.parent).prepend(this.placeholder);
+					}
+					this._trigger("revert", event, this._uiHash());
+				} else {
 					var parent = this.placeholder.parent().closest(this.options.items);
 
 					for (var i = this.beyondMaxLevels - 1; i > 0; i--) {
@@ -185,14 +193,8 @@
 
 					parent.after(this.placeholder);
 					this._trigger("change", event, this._uiHash());
-
-				} else {
-					if (this.domPosition.prev) {
-						$(this.domPosition.prev).after(this.placeholder);
-					} else {
-						$(this.domPosition.parent).prepend(this.placeholder);
-					}
 				}
+
 			}
 
 			$.ui.sortable.prototype._mouseStop.apply(this, arguments);
