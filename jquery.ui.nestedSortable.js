@@ -20,17 +20,20 @@
 			errorClass: 'ui-nestedSortable-error',
 			listType: 'ol',
 			maxLevels: 0,
-			noJumpFix: 0
+			revertOnError: 1
 		},
 
-		_create: function(){
-			if (this.noJumpFix == false)
-				this.element.height(this.element.height());
+		_create: function() {
 			this.element.data('sortable', this.element.data('nestedSortable'));
 			return $.ui.sortable.prototype._create.apply(this, arguments);
 		},
 
-
+		destroy: function() {
+			this.element
+				.removeData("nestedSortable")
+				.unbind(".nestedSortable");
+			return $.ui.sortable.prototype.destroy.apply(this, arguments);
+		},
 
 		_mouseDrag: function(event) {
 
@@ -96,9 +99,12 @@
 					//&& itemElement.parentNode == this.placeholder[0].parentNode // only rearrange items within the same container
 				) {
 
+					$(itemElement).mouseenter();
+
 					this.direction = intersection == 1 ? "down" : "up";
 
 					if (this.options.tolerance == "pointer" || this._intersectsWithSides(item)) {
+						$(itemElement).mouseleave();
 						this._rearrange(event, item);
 					} else {
 						break;
@@ -112,10 +118,14 @@
 				}
 			}
 
-			var parentItem = (this.placeholder[0].parentNode.parentNode && $(this.placeholder[0].parentNode.parentNode).closest('.ui-sortable').length) ? $(this.placeholder[0].parentNode.parentNode) : null;
-			var level = this._getLevel(this.placeholder);
-			var childLevels = this._getChildLevels(this.helper);
-			var previousItem = this.placeholder[0].previousSibling ? $(this.placeholder[0].previousSibling) : null;
+			var parentItem = (this.placeholder[0].parentNode.parentNode
+				       && $(this.placeholder[0].parentNode.parentNode).closest('.ui-sortable').length)
+				       ? $(this.placeholder[0].parentNode.parentNode)
+				       : null,
+			    level = this._getLevel(this.placeholder),
+			    childLevels = this._getChildLevels(this.helper),
+			    previousItem = this.placeholder[0].previousSibling ? $(this.placeholder[0].previousSibling) : null;
+
 			if (previousItem != null) {
 				while (previousItem[0].nodeName.toLowerCase() != 'li' || previousItem[0] == this.currentItem[0]) {
 					if (previousItem[0].previousSibling) {
@@ -140,10 +150,10 @@
 			// If the item is below another one and is moved to the right, make it a children of it
 			else if (previousItem != null && this.positionAbs.left > previousItem.offset().left + o.tabSize) {
 				this._isAllowed(previousItem, level+childLevels+1);
-				if (previousItem[0].children[1] == null) {
+				if (!previousItem.children(o.listType).length) {
 					previousItem[0].appendChild(newList);
 				}
-				previousItem[0].children[1].appendChild(this.placeholder[0]);
+				previousItem.children(o.listType)[0].appendChild(this.placeholder[0]);
 				this._trigger("change", event, this._uiHash());
 			}
 			else {
@@ -168,15 +178,33 @@
 
 			// If the item is in a position not allowed, send it back
 			if (this.beyondMaxLevels) {
-				var parent = this.placeholder.parent().closest(this.options.items);
-				
-				for (var i = this.beyondMaxLevels - 1; i > 0; i--) {
-					parent = parent.parent().closest(this.options.items);
-				}
 
 				this.placeholder.removeClass(this.options.errorClass);
-				parent.after(this.placeholder);
-				this._trigger("change", event, this._uiHash());
+
+				if (this.options.revertOnError) {
+					if (this.domPosition.prev) {
+						$(this.domPosition.prev).after(this.placeholder);
+					} else {
+						$(this.domPosition.parent).prepend(this.placeholder);
+					}
+					this._trigger("revert", event, this._uiHash());
+				} else {
+					var parent = this.placeholder.parent().closest(this.options.items);
+
+					for (var i = this.beyondMaxLevels - 1; i > 0; i--) {
+						parent = parent.parent().closest(this.options.items);
+					}
+
+					parent.after(this.placeholder);
+					this._trigger("change", event, this._uiHash());
+				}
+
+			}
+
+			// Clean last empty ul/ol
+			for (var i = this.items.length - 1; i >= 0; i--) {
+				var item = this.items[i].item[0];
+				this._clearEmpty(item);
 			}
 
 			$.ui.sortable.prototype._mouseStop.apply(this, arguments);
@@ -185,13 +213,22 @@
 
 		serialize: function(o) {
 
-			var items = this._getItemsAsjQuery(o && o.connected);
-			var str = []; o = o || {};
+			var items = this._getItemsAsjQuery(o && o.connected),
+			    str = []; o = o || {};
 
 			$(items).each(function() {
-				var res = ($(o.item || this).attr(o.attribute || 'id') || '').match(o.expression || (/(.+)[-=_](.+)/));
-				var pid = ($(o.item || this).parent(o.listType).parent('li').attr(o.attribute || 'id') || '').match(o.expression || (/(.+)[-=_](.+)/));
-				if(res) str.push((o.key || res[1]+'['+(o.key && o.expression ? res[1] : res[2])+']')+'='+(pid ? (o.key && o.expression ? pid[1] : pid[2]) : 'root'));
+				var res = ($(o.item || this).attr(o.attribute || 'id') || '')
+						.match(o.expression || (/(.+)[-=_](.+)/)),
+				    pid = ($(o.item || this).parent(o.listType)
+						.parent('li')
+						.attr(o.attribute || 'id') || '')
+						.match(o.expression || (/(.+)[-=_](.+)/));
+
+				if (res) {
+					str.push((o.key || res[1] + '[' + (o.key && o.expression ? res[1] : res[2]) + ']')
+						+ '='
+						+ (pid ? (o.key && o.expression ? pid[1] : pid[2]) : 'root'));
+				}
 			});
 
 			if(!str.length && o.key) {
@@ -205,10 +242,10 @@
 		toHierarchy: function(o) {
 
 			o = o || {};
-			var sDepth = o.startDepthCount || 0;
-			var ret = [];
+			var sDepth = o.startDepthCount || 0,
+			    ret = [];
 
-			$(this.element).children('li').each(function() {
+			$(this.element).children('li').each(function () {
 				var level = _recursiveItems($(this));
 				ret.push(level);
 			});
@@ -217,11 +254,11 @@
 
 			function _recursiveItems(li) {
 				var id = ($(li).attr(o.attribute || 'id') || '').match(o.expression || (/(.+)[-=_](.+)/));
-				if (id != null) {
+				if (id) {
 					var item = {"id" : id[2]};
 					if ($(li).children(o.listType).children('li').length > 0) {
 						item.children = [];
-						$(li).children(o.listType).children('li').each(function () {
+						$(li).children(o.listType).children('li').each(function() {
 							var level = _recursiveItems($(this));
 							item.children.push(level);
 						});
@@ -229,31 +266,36 @@
 					return item;
 				}
 			}
-        },
+		},
 
 		toArray: function(o) {
 
 			o = o || {};
-			var sDepth = o.startDepthCount || 0;
-			var ret = [];
-			var left = 2;
+			var sDepth = o.startDepthCount || 0,
+			    ret = [],
+			    left = 2;
 
-			ret.push({"item_id": 'root', "parent_id": 'none', "depth": sDepth, "left": '1', "right": ($('li', this.element).length + 1) * 2});
+			ret.push({
+				"item_id": 'root',
+				"parent_id": 'none',
+				"depth": sDepth,
+				"left": '1',
+				"right": ($('li', this.element).length + 1) * 2
+			});
 
 			$(this.element).children('li').each(function () {
 				left = _recursiveArray(this, sDepth + 1, left);
 			});
 
-			function _sortByLeft(a,b) {
-				return a['left'] - b['left'];
-			}
-			ret = ret.sort(_sortByLeft);
+			ret = ret.sort(function(a,b){ return (a.left - b.left); });
 
 			return ret;
 
 			function _recursiveArray(item, depth, left) {
 
-				right = left + 1;
+				var right = left + 1,
+				    id,
+				    pid;
 
 				if ($(item).children(o.listType).children('li').length > 0) {
 					depth ++;
@@ -265,38 +307,31 @@
 
 				id = ($(item).attr(o.attribute || 'id')).match(o.expression || (/(.+)[-=_](.+)/));
 
-				if (depth === sDepth + 1) pid = 'root';
-				else {
-					parentItem = ($(item).parent(o.listType).parent('li').attr('id')).match(o.expression || (/(.+)[-=_](.+)/));
+				if (depth === sDepth + 1) {
+					pid = 'root';
+				} else {
+					var parentItem = ($(item).parent(o.listType)
+						.parent('li')
+						.attr(o.attribute || 'id'))
+						.match(o.expression || (/(.+)[-=_](.+)/));
 					pid = parentItem[2];
 				}
 
-				if (id != null) {
+				if (id) {
 						ret.push({"item_id": id[2], "parent_id": pid, "depth": depth, "left": left, "right": right});
 				}
 
-				return left = right + 1;
+				left = right + 1;
+				return left;
 			}
-
-		},
-
-		_clear: function(event, noPropagation) {
-
-			$.ui.sortable.prototype._clear.apply(this, arguments);
-
-			// Clean last empty ul/ol
-			for (var i = this.items.length - 1; i >= 0; i--) {
-				var item = this.items[i].item[0];
-				this._clearEmpty(item);
-			}
-			return true;
 
 		},
 
 		_clearEmpty: function(item) {
 
-			if (item.children[1] && item.children[1].children.length == 0) {
-				item.removeChild(item.children[1]);
+			var emptyList = $(item).children(this.options.listType);
+			if (emptyList.length && !emptyList.children().length) {
+				emptyList.remove();
 			}
 
 		},
@@ -306,11 +341,11 @@
 			var level = 1;
 
 			if (this.options.listType) {
-					var list = item.closest(this.options.listType);
-					while (!list.is('.ui-sortable')/* && level < this.options.maxLevels*/) {
-							level++;
-							list = list.parent().closest(this.options.listType);
-					}
+				var list = item.closest(this.options.listType);
+				while (!list.is('.ui-sortable')) {
+					level++;
+					list = list.parent().closest(this.options.listType);
+				}
 			}
 
 			return level;
@@ -330,7 +365,7 @@
 		},
 
 		_isAllowed: function(parentItem, levels) {
-			var o = this.options
+			var o = this.options;
 			// Are we trying to nest under a no-nest or are we nesting too deep?
 			if (parentItem == null || !(parentItem.hasClass(o.disableNesting))) {
 				if (o.maxLevels < levels && o.maxLevels != 0) {
@@ -342,7 +377,11 @@
 				}
 			} else {
 				this.placeholder.addClass(o.errorClass);
-				this.beyondMaxLevels = (levels - o.maxLevels) > 0 ? levels - o.maxLevels : 1;
+				if (o.maxLevels < levels && o.maxLevels != 0) {
+					this.beyondMaxLevels = levels - o.maxLevels;
+				} else {
+					this.beyondMaxLevels = 1;
+				}
 			}
 		}
 
