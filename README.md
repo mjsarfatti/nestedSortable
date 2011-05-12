@@ -33,27 +33,26 @@ Please note: every `<li>` must have either one or two direct children, the first
 
 <dl>
 	<dt>tabSize</dt>
-	<dd>How far right or left (in pixels) the item has to travel in order to be nested or to be sent outside its current list. Default: **20**</dd>
+	<dd>How far right or left (in pixels) the item has to travel in order to be nested or to be sent outside its current list. Default: <b>20</b></dd>
 	<dt>disableNesting </dt>
-	<dd>The class name of the items that will not accept nested lists. Default: **ui-nestedSortable-no-nesting**</dd>
+	<dd>The class name of the items that will not accept nested lists. Default: <b>ui-nestedSortable-no-nesting</b></dd>
 	<dt>errorClass </dt>
-	<dd>The class given to the placeholder in case of error. Default: **ui-nestedSortable-error**</dd> 
+	<dd>The class given to the placeholder in case of error. Default: <b>ui-nestedSortable-error</b></dd>
 	<dt>listType </dt>
-	<dd>The list type used (ordered or unordered). Default: **ol**</dd>
+	<dd>The list type used (ordered or unordered). Default: <b>ol</b></dd>
 	<dt>maxLevels </dt>
-	<dd>The maximum depth of nested items the list can accept. If set to '0' the levels are unlimited. Default: **0**</dd>
+	<dd>The maximum depth of nested items the list can accept. If set to '0' the levels are unlimited. Default: <b>0</b></dd>
 </dl>
 
 ## Custom Methods
 
 <dl>
 	<dt>serialize</dt>
-	<dd>Serializes the nested list into a string like **setName[item1Id]=parentId&setName[item2Id]=parentId**, reading from each item's id formatted as 'setName_itemId' (where itemId is a number).
-	It accepts the same options as the original Sortable method (**key**, **attribute** and **expression**).</dd>
+	<dd>Serializes the nested list into a string like <b>setName[item1Id]=parentId&setName[item2Id]=parentId</b>, reading from each item's id formatted as 'setName_itemId' (where itemId is a number).
+	It accepts the same options as the original Sortable method (<b>key</b>, <b>attribute</b> and <b>expression</b>).</dd>
 	<dt>toArray</dt>
 	<dd>Builds an array where each element is in the form:
-```
-setName[n] =>
+<pre>setName[n] =>
 {
 	'item_id': itemId,
 	'parent_id': parentId,
@@ -61,12 +60,11 @@ setName[n] =>
 	'left': left,
 	'right': right,
 }
-```
-	It accepts the same options as the original Sortable method (**attribute** and **expression**) plus the custom ** startDepthCount**, that sets the starting depth number (default is **0**).</dd>
+</pre>
+	It accepts the same options as the original Sortable method (<b>attribute</b> and <b>expression</b>) plus the custom <b>startDepthCount</b>, that sets the starting depth number (default is <b>0</b>).</dd>
 	<dt>toHierarchy</dt>
 	<dd>Builds a hierarchical object in the form:
-```
-'0' ...
+<pre>'0' ...
 	'id' => itemId
 '1' ...
 	'id' => itemId
@@ -77,8 +75,8 @@ setName[n] =>
 			'id' => itemId
 '2' ...
 	'id' => itemId
-```
-	Similarly to `toArray`, it accepts **attribute** and **expression** options.</dd>
+</pre>
+	Similarly to <code>toArray</code>, it accepts <b>attribute</b> and <b>expression</b> options.</dd>
 </dl>
 
 ## Known Bugs
@@ -87,14 +85,14 @@ setName[n] =>
 
 ## Requirements
 
-jQuery 1.4+
+jQuery 1.4+  
 jQuery UI Sortable 1.8+
 
 ## Browser Compatibility
 
 Tested with: IE 6/7/8, Firefox 3.6/4, Chrome, Safari 3
 
-# License
+## License
 
 This work is licensed under a Creative Commons Attribution-ShareAlike 3.0 Unported License.
 
