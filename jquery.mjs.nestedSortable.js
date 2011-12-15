@@ -12,16 +12,20 @@
 
 (function($) {
 
-	$.widget("ui.nestedSortable", $.extend({}, $.ui.sortable.prototype, {
+	$.widget("mjs.nestedSortable", $.extend({}, $.ui.sortable.prototype, {
 
 		options: {
 			tabSize: 20,
-			disableNesting: 'ui-nestedSortable-no-nesting',
-			errorClass: 'ui-nestedSortable-error',
+			disableNesting: 'mjs-nestedSortable-no-nesting',
+			errorClass: 'mjs-nestedSortable-error',
 			listType: 'ol',
 			maxLevels: 0,
-			revertOnError: 1,
+			protectRoot: 0,
 			rtl: 0
+		},
+
+		hooks: {
+			isAllowed: function(item, parent) { return false; },
 		},
 
 		_create: function() {
@@ -119,10 +123,10 @@
 				}
 			}
 
-			var parentItem = (this.placeholder[0].parentNode.parentNode
-				       && $(this.placeholder[0].parentNode.parentNode).closest('.ui-sortable').length)
-				       ? $(this.placeholder[0].parentNode.parentNode)
-				       : null,
+			var parentItem = (this.placeholder[0].parentNode.parentNode &&
+							 $(this.placeholder[0].parentNode.parentNode).closest('.ui-sortable').length)
+				       			? $(this.placeholder[0].parentNode.parentNode)
+				       			: null,
 			    level = this._getLevel(this.placeholder),
 			    childLevels = this._getChildLevels(this.helper),
 			    previousItem = this.placeholder[0].previousSibling ? $(this.placeholder[0].previousSibling) : null;
@@ -138,25 +142,23 @@
 				}
 			}
 
-			newList = document.createElement(o.listType);
+			var newList = document.createElement(o.listType);
 
 			this.beyondMaxLevels = 0;
 			
 			// If the item is moved to the left, send it to its parent level
-			if (parentItem != null
-				&& (o.rtl && (this.positionAbs.left + this.helper.outerWidth() > parentItem.offset().left + parentItem.outerWidth())
-					|| !o.rtl && (this.positionAbs.left < parentItem.offset().left))
-			) {
+			if (parentItem != null &&
+					(o.rtl && (this.positionAbs.left + this.helper.outerWidth() > parentItem.offset().left + parentItem.outerWidth()) ||
+					!o.rtl && (this.positionAbs.left < parentItem.offset().left))) {
 				parentItem.after(this.placeholder[0]);
 				this._clearEmpty(parentItem[0]);
 				this._trigger("change", event, this._uiHash());
 			}
 			// If the item is below another one and is moved to the right, make it a children of it
-			else if (previousItem != null
-				&& (o.rtl && (this.positionAbs.left + this.helper.outerWidth() < previousItem.offset().left + previousItem.outerWidth() - o.tabSize)
-					|| !o.rtl && (this.positionAbs.left > previousItem.offset().left + o.tabSize))
-			) {
-				this._isAllowed(previousItem, level+childLevels+1);
+			else if (previousItem != null &&
+						(o.rtl && (this.positionAbs.left + this.helper.outerWidth() < previousItem.offset().left + previousItem.outerWidth() - o.tabSize) ||
+						!o.rtl && (this.positionAbs.left > previousItem.offset().left + o.tabSize))) {
+				this._isAllowed(previousItem, level, level+childLevels+1);
 				if (!previousItem.children(o.listType).length) {
 					previousItem[0].appendChild(newList);
 				}
@@ -164,7 +166,7 @@
 				this._trigger("change", event, this._uiHash());
 			}
 			else {
-				this._isAllowed(parentItem, level+childLevels);
+				this._isAllowed(parentItem, level, level+childLevels);
 			}
 
 			//Post events to containers
@@ -188,23 +190,13 @@
 
 				this.placeholder.removeClass(this.options.errorClass);
 
-				if (this.options.revertOnError) {
-					if (this.domPosition.prev) {
-						$(this.domPosition.prev).after(this.placeholder);
-					} else {
-						$(this.domPosition.parent).prepend(this.placeholder);
-					}
-					this._trigger("revert", event, this._uiHash());
+				if (this.domPosition.prev) {
+					$(this.domPosition.prev).after(this.placeholder);
 				} else {
-					var parent = this.placeholder.parent().closest(this.options.items);
-
-					for (var i = this.beyondMaxLevels - 1; i > 0; i--) {
-						parent = parent.parent().closest(this.options.items);
-					}
-
-					parent.after(this.placeholder);
-					this._trigger("change", event, this._uiHash());
+					$(this.domPosition.parent).prepend(this.placeholder);
 				}
+
+				this._trigger("revert", event, this._uiHash());
 
 			}
 
@@ -371,10 +363,23 @@
 			return depth ? result + 1 : result;
 		},
 
-		_isAllowed: function(parentItem, levels) {
-			var o = this.options;
-			// Are we trying to nest under a no-nest or are we nesting too deep?
-			if (parentItem == null || !(parentItem.hasClass(o.disableNesting))) {
+		_isAllowed: function(parentItem, level, levels) {
+			var o = this.options,
+				isRoot = $(this.domPosition.parent).hasClass('ui-sortable') ? true : false;
+
+			// Is the root protected?
+			// Are we trying to nest under a no-nest?
+			// Are we nesting too deep?
+			if (this.hooks.isAllowed(parentItem, this.placeholder) ||
+				parentItem && parentItem.hasClass(o.disableNesting) ||
+				o.protectRoot && (parentItem == null && !isRoot || isRoot && level > 1)) {
+					this.placeholder.addClass(o.errorClass);
+					if (o.maxLevels < levels && o.maxLevels != 0) {
+						this.beyondMaxLevels = levels - o.maxLevels;
+					} else {
+						this.beyondMaxLevels = 1;
+					}
+			} else {
 				if (o.maxLevels < levels && o.maxLevels != 0) {
 					this.placeholder.addClass(o.errorClass);
 					this.beyondMaxLevels = levels - o.maxLevels;
@@ -382,17 +387,10 @@
 					this.placeholder.removeClass(o.errorClass);
 					this.beyondMaxLevels = 0;
 				}
-			} else {
-				this.placeholder.addClass(o.errorClass);
-				if (o.maxLevels < levels && o.maxLevels != 0) {
-					this.beyondMaxLevels = levels - o.maxLevels;
-				} else {
-					this.beyondMaxLevels = 1;
-				}
 			}
 		}
 
 	}));
 
-	$.ui.nestedSortable.prototype.options = $.extend({}, $.ui.sortable.prototype.options, $.ui.nestedSortable.prototype.options);
+	$.mjs.nestedSortable.prototype.options = $.extend({}, $.ui.sortable.prototype.options, $.mjs.nestedSortable.prototype.options);
 })(jQuery);
