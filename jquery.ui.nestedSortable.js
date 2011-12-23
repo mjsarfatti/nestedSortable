@@ -20,7 +20,8 @@
 			errorClass: 'ui-nestedSortable-error',
 			listType: 'ol',
 			maxLevels: 0,
-			revertOnError: 1
+			revertOnError: 1,
+			rootID: 'root'
 		},
 
 		_create: function() {
@@ -227,7 +228,7 @@
 				if (res) {
 					str.push((o.key || res[1] + '[' + (o.key && o.expression ? res[1] : res[2]) + ']')
 						+ '='
-						+ (pid ? (o.key && o.expression ? pid[1] : pid[2]) : 'root'));
+						+ (pid ? (o.key && o.expression ? pid[1] : pid[2]) : this.options.rootID));
 				}
 			});
 
@@ -276,7 +277,7 @@
 			    left = 2;
 
 			ret.push({
-				"item_id": 'root',
+				"item_id": this.options.rootID,
 				"parent_id": 'none',
 				"depth": sDepth,
 				"left": '1',
@@ -308,7 +309,7 @@
 				id = ($(item).attr(o.attribute || 'id')).match(o.expression || (/(.+)[-=_](.+)/));
 
 				if (depth === sDepth + 1) {
-					pid = 'root';
+					pid = this.options.rootID;
 				} else {
 					var parentItem = ($(item).parent(o.listType)
 						.parent('li')
