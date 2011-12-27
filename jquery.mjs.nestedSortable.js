@@ -21,7 +21,13 @@
 			listType: 'ol',
 			maxLevels: 0,
 			protectRoot: 0,
-			rtl: 0
+			rtl: 0,
+			getItemId: function(item) {
+
+				var data = ($(item).attr('id') || '').match(/(.+)[-=_](.+)/);
+				return data && data.length >= 2 ? data[2] : '';
+
+			}
 		},
 
 		hooks: {
@@ -145,7 +151,7 @@
 			var newList = document.createElement(o.listType);
 
 			this.beyondMaxLevels = 0;
-			
+
 			// If the item is moved to the left, send it to its parent level
 			if (parentItem != null &&
 					(o.rtl && (this.positionAbs.left + this.helper.outerWidth() > parentItem.offset().left + parentItem.outerWidth()) ||
@@ -213,20 +219,20 @@
 		serialize: function(o) {
 
 			var items = this._getItemsAsjQuery(o && o.connected),
-			    str = []; o = o || {};
+			    str = [],
+			    o = o || {},
+			    self = this;
 
 			$(items).each(function() {
 				var res = ($(o.item || this).attr(o.attribute || 'id') || '')
 						.match(o.expression || (/(.+)[-=_](.+)/)),
-				    pid = ($(o.item || this).parent(o.listType)
-						.parent('li')
-						.attr(o.attribute || 'id') || '')
-						.match(o.expression || (/(.+)[-=_](.+)/));
+				    id = self._getItemId(o.item || this);
+				    pid = self._getItemId($(o.item || this).parent(o.listType).parent('li'));
 
 				if (res) {
-					str.push((o.key || res[1] + '[' + (o.key && o.expression ? res[1] : res[2]) + ']')
+					str.push((o.key || res[1] + '[' + (o.key && o.expression ? res[1] : id) + ']')
 						+ '='
-						+ (pid ? (o.key && o.expression ? pid[1] : pid[2]) : 'root'));
+						+ (pid ? pid : 'root'));
 				}
 			});
 
@@ -242,7 +248,8 @@
 
 			o = o || {};
 			var sDepth = o.startDepthCount || 0,
-			    ret = [];
+			    ret = [],
+			    self = this;
 
 			$(this.element).children('li').each(function () {
 				var level = _recursiveItems($(this));
@@ -252,9 +259,9 @@
 			return ret;
 
 			function _recursiveItems(li) {
-				var id = ($(li).attr(o.attribute || 'id') || '').match(o.expression || (/(.+)[-=_](.+)/));
+				var id = self._getItemId(li);
 				if (id) {
-					var item = {"id" : id[2]};
+					var item = {"id" : id};
 					if ($(li).children(o.listType).children('li').length > 0) {
 						item.children = [];
 						$(li).children(o.listType).children('li').each(function() {
@@ -272,7 +279,8 @@
 			o = o || {};
 			var sDepth = o.startDepthCount || 0,
 			    ret = [],
-			    left = 2;
+			    left = 2,
+			    self = this;
 
 			ret.push({
 				"item_id": 'root',
@@ -282,7 +290,7 @@
 				"right": ($('li', this.element).length + 1) * 2
 			});
 
-			$(this.element).children('li').each(function () {
+			$(this.element).children('li').each(function() {
 				left = _recursiveArray(this, sDepth + 1, left);
 			});
 
@@ -304,20 +312,17 @@
 					depth --;
 				}
 
-				id = ($(item).attr(o.attribute || 'id')).match(o.expression || (/(.+)[-=_](.+)/));
+				id = self._getItemId(item);
 
 				if (depth === sDepth + 1) {
 					pid = 'root';
 				} else {
-					var parentItem = ($(item).parent(o.listType)
-						.parent('li')
-						.attr(o.attribute || 'id'))
-						.match(o.expression || (/(.+)[-=_](.+)/));
-					pid = parentItem[2];
+					var parentItem = $(item).parent(o.listType).parent('li');
+					pid = self._getItemId(parentItem);
 				}
 
 				if (id) {
-						ret.push({"item_id": id[2], "parent_id": pid, "depth": depth, "left": left, "right": right});
+						ret.push({"item_id": id, "parent_id": pid, "depth": depth, "left": left, "right": right});
 				}
 
 				left = right + 1;
@@ -332,6 +337,12 @@
 			if (emptyList.length && !emptyList.children().length) {
 				emptyList.remove();
 			}
+
+		},
+
+		_getItemId: function(item) {
+
+			return this.options.getItemId(item);
 
 		},
 
