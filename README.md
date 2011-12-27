@@ -42,6 +42,8 @@ Please note: every `<li>` must have either one or two direct children, the first
 	<dd>The list type used (ordered or unordered). Default: <b>ol</b></dd>
 	<dt>maxLevels </dt>
 	<dd>The maximum depth of nested items the list can accept. If set to '0' the levels are unlimited. Default: <b>0</b></dd>
+	<dt>getItemId </dt>
+	<dd>The ID attribution method for the nodes. Default: <b>based on the item's `id` attribute</b></dd>
 </dl>
 
 ## Custom Methods
