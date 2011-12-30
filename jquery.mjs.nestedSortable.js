@@ -210,16 +210,17 @@
 
 		},
 
-		serialize: function(o) {
+		serialize: function(options) {
 
-			var items = this._getItemsAsjQuery(o && o.connected),
-			    str = []; o = o || {};
+			var o = $.extend({}, this.options, options),
+				items = this._getItemsAsjQuery(o && o.connected),
+			    str = [];
 
 			$(items).each(function() {
 				var res = ($(o.item || this).attr(o.attribute || 'id') || '')
 						.match(o.expression || (/(.+)[-=_](.+)/)),
 				    pid = ($(o.item || this).parent(o.listType)
-						.parent('li')
+						.parent(o.items)
 						.attr(o.attribute || 'id') || '')
 						.match(o.expression || (/(.+)[-=_](.+)/));
 
@@ -238,39 +239,39 @@
 
 		},
 
-		toHierarchy: function(o) {
+		toHierarchy: function(options) {
 
-			o = o || {};
-			var sDepth = o.startDepthCount || 0,
+			var o = $.extend({}, this.options, options),
+				sDepth = o.startDepthCount || 0,
 			    ret = [];
 
-			$(this.element).children('li').each(function () {
-				var level = _recursiveItems($(this));
+			$(this.element).children(o.items).each(function () {
+				var level = _recursiveItems(this);
 				ret.push(level);
 			});
 
 			return ret;
 
-			function _recursiveItems(li) {
-				var id = ($(li).attr(o.attribute || 'id') || '').match(o.expression || (/(.+)[-=_](.+)/));
+			function _recursiveItems(item) {
+				var id = ($(item).attr(o.attribute || 'id') || '').match(o.expression || (/(.+)[-=_](.+)/));
 				if (id) {
-					var item = {"id" : id[2]};
-					if ($(li).children(o.listType).children('li').length > 0) {
-						item.children = [];
-						$(li).children(o.listType).children('li').each(function() {
-							var level = _recursiveItems($(this));
-							item.children.push(level);
+					var currentItem = {"id" : id[2]};
+					if ($(item).children(o.listType).children(o.items).length > 0) {
+						currentItem.children = [];
+						$(item).children(o.listType).children(o.items).each(function() {
+							var level = _recursiveItems(this);
+							currentItem.children.push(level);
 						});
 					}
-					return item;
+					return currentItem;
 				}
 			}
 		},
 
-		toArray: function(o) {
+		toArray: function(options) {
 
-			o = o || {};
-			var sDepth = o.startDepthCount || 0,
+			var o = $.extend({}, this.options, options),
+				sDepth = o.startDepthCount || 0,
 			    ret = [],
 			    left = 2;
 
@@ -279,10 +280,10 @@
 				"parent_id": 'none',
 				"depth": sDepth,
 				"left": '1',
-				"right": ($('li', this.element).length + 1) * 2
+				"right": ($(o.items, this.element).length + 1) * 2
 			});
 
-			$(this.element).children('li').each(function () {
+			$(this.element).children(o.items).each(function () {
 				left = _recursiveArray(this, sDepth + 1, left);
 			});
 
@@ -296,9 +297,9 @@
 				    id,
 				    pid;
 
-				if ($(item).children(o.listType).children('li').length > 0) {
-					depth ++;
-					$(item).children(o.listType).children('li').each(function () {
+				if ($(item).children(o.listType).children(o.items).length > 0) {
+					depth ++;console.log(o.listType);
+					$(item).children(o.listType).children(o.items).each(function () {
 						right = _recursiveArray($(this), depth, right);
 					});
 					depth --;
@@ -310,9 +311,9 @@
 					pid = 'root';
 				} else {
 					var parentItem = ($(item).parent(o.listType)
-						.parent('li')
-						.attr(o.attribute || 'id'))
-						.match(o.expression || (/(.+)[-=_](.+)/));
+											 .parent(o.items)
+											 .attr(o.attribute || 'id'))
+											 .match(o.expression || (/(.+)[-=_](.+)/));
 					pid = parentItem[2];
 				}
 
