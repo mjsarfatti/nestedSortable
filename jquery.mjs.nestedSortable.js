@@ -1,13 +1,14 @@
 /*
  * jQuery UI Nested Sortable
- * v 1.3.4 / 28 apr 2011
- * http://mjsarfatti.com/sandbox/nestedSortable
+ * v 1.4 / 30 dec 2011
+ * http://mjsarfatti.com/code/nestedSortable
  *
- * Depends:
+ * Depends on:
  *	 jquery.ui.sortable.js 1.8+
  *
- * License CC BY-SA 3.0
- * Copyright 2010-2011, Manuele J Sarfatti
+ * Copyright (c) 2010-2012 Manuele J Sarfatti
+ * Licensed under the MIT License
+ * http://www.opensource.org/licenses/mit-license.php
  */
 
 (function($) {
@@ -20,12 +21,10 @@
 			errorClass: 'mjs-nestedSortable-error',
 			listType: 'ol',
 			maxLevels: 0,
-			protectRoot: 0,
-			rtl: 0
-		},
-
-		hooks: {
-			isAllowed: function(item, parent) { return false; },
+			protectRoot: false,
+			rootID: null,
+			rtl: false,
+			isAllowed: function(item, parent) { return true; },
 		},
 
 		_create: function() {
@@ -231,7 +230,7 @@
 				if (res) {
 					str.push((o.key || res[1] + '[' + (o.key && o.expression ? res[1] : res[2]) + ']')
 						+ '='
-						+ (pid ? (o.key && o.expression ? pid[1] : pid[2]) : 'root'));
+						+ (pid ? (o.key && o.expression ? pid[1] : pid[2]) : o.rootID);
 				}
 			});
 
@@ -280,7 +279,7 @@
 			    left = 2;
 
 			ret.push({
-				"item_id": 'root',
+				"item_id": o.rootID,
 				"parent_id": 'none',
 				"depth": sDepth,
 				"left": '1',
@@ -312,7 +311,7 @@
 				id = ($(item).attr(o.attribute || 'id')).match(o.expression || (/(.+)[-=_](.+)/));
 
 				if (depth === sDepth + 1) {
-					pid = 'root';
+					pid = o.rootID;
 				} else {
 					var parentItem = ($(item).parent(o.listType)
 											 .parent(o.items)
@@ -375,7 +374,7 @@
 			// Is the root protected?
 			// Are we trying to nest under a no-nest?
 			// Are we nesting too deep?
-			if (this.hooks.isAllowed(parentItem, this.placeholder) ||
+			if (!o.isAllowed(parentItem, this.placeholder) ||
 				parentItem && parentItem.hasClass(o.disableNesting) ||
 				o.protectRoot && (parentItem == null && !isRoot || isRoot && level > 1)) {
 					this.placeholder.addClass(o.errorClass);
