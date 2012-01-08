@@ -230,7 +230,7 @@
 				if (res) {
 					str.push((o.key || res[1] + '[' + (o.key && o.expression ? res[1] : res[2]) + ']')
 						+ '='
-						+ (pid ? (o.key && o.expression ? pid[1] : pid[2]) : o.rootID);
+						+ (pid ? (o.key && o.expression ? pid[1] : pid[2]) : o.rootID));
 				}
 			});
 
