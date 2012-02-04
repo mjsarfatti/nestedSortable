@@ -161,7 +161,7 @@
 			else if (previousItem != null &&
 						(o.rtl && (this.positionAbs.left + this.helper.outerWidth() < previousItem.offset().left + previousItem.outerWidth() - o.tabSize) ||
 						!o.rtl && (this.positionAbs.left > previousItem.offset().left + o.tabSize))) {
-				this._isAllowed(previousItem, level, level+childLevels+1);
+				this._isAllowed(this.currentItem[0], previousItem, level, level+childLevels+1);
 				if (!previousItem.children(o.listType).length) {
 					previousItem[0].appendChild(newList);
 				}
@@ -169,7 +169,7 @@
 				this._trigger("change", event, this._uiHash());
 			}
 			else {
-				this._isAllowed(parentItem, level, level+childLevels);
+				this._isAllowed(this.currentItem[0], parentItem?parentItem:this.element, level, level+childLevels);
 			}
 
 			//Post events to containers
@@ -230,7 +230,7 @@
 				if (res) {
 					str.push((o.key || res[1] + '[' + (o.key && o.expression ? res[1] : res[2]) + ']')
 						+ '='
-						+ (pid ? (o.key && o.expression ? pid[1] : pid[2]) : o.rootID));
+						+ (pid ? (o.key && o.expression ? pid[1] : pid[2]) : o.rootID?o.rootID:''));
 				}
 			});
 
@@ -279,7 +279,7 @@
 			    left = 2;
 
 			ret.push({
-				"item_id": o.rootID,
+				"item_id": o.rootID?o.rootID:'',
 				"parent_id": 'none',
 				"depth": sDepth,
 				"left": '1',
@@ -311,7 +311,7 @@
 				id = ($(item).attr(o.attribute || 'id')).match(o.expression || (/(.+)[-=_](.+)/));
 
 				if (depth === sDepth + 1) {
-					pid = o.rootID;
+					pid = o.rootID?o.rootID:'';
 				} else {
 					var parentItem = ($(item).parent(o.listType)
 											 .parent(o.items)
@@ -367,14 +367,14 @@
 			return depth ? result + 1 : result;
 		},
 
-		_isAllowed: function(parentItem, level, levels) {
+		_isAllowed: function(childItem, parentItem, level, levels) {
 			var o = this.options,
 				isRoot = $(this.domPosition.parent).hasClass('ui-sortable') ? true : false;
 
 			// Is the root protected?
 			// Are we trying to nest under a no-nest?
 			// Are we nesting too deep?
-			if (!o.isAllowed(parentItem, this.placeholder) ||
+			if (!o.isAllowed(childItem, parentItem, this.placeholder) ||
 				parentItem && parentItem.hasClass(o.disableNesting) ||
 				o.protectRoot && (parentItem == null && !isRoot || isRoot && level > 1)) {
 					this.placeholder.addClass(o.errorClass);
