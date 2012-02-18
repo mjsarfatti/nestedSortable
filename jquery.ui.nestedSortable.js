@@ -20,7 +20,9 @@
 			errorClass: 'ui-nestedSortable-error',
 			listType: 'ol',
 			maxLevels: 0,
-			revertOnError: 1
+			revertOnError: 1,
+			scrollX: true, //if true, the page scrolls when a list item is dragged past the width of the container
+			scrollY: true //if true, the page scrolls when a list item is dragged past the height of the container
 		},
 
 		_create: function() {
@@ -36,7 +38,6 @@
 		},
 
 		_mouseDrag: function(event) {
-
 			//Compute the helpers position
 			this.position = this._generatePosition(event);
 			this.positionAbs = this._convertPositionTo("absolute");
@@ -49,29 +50,31 @@
 			if(this.options.scroll) {
 				var o = this.options, scrolled = false;
 				if(this.scrollParent[0] != document && this.scrollParent[0].tagName != 'HTML') {
-
-					if((this.overflowOffset.top + this.scrollParent[0].offsetHeight) - event.pageY < o.scrollSensitivity)
-						this.scrollParent[0].scrollTop = scrolled = this.scrollParent[0].scrollTop + o.scrollSpeed;
-					else if(event.pageY - this.overflowOffset.top < o.scrollSensitivity)
-						this.scrollParent[0].scrollTop = scrolled = this.scrollParent[0].scrollTop - o.scrollSpeed;
-
-					if((this.overflowOffset.left + this.scrollParent[0].offsetWidth) - event.pageX < o.scrollSensitivity)
-						this.scrollParent[0].scrollLeft = scrolled = this.scrollParent[0].scrollLeft + o.scrollSpeed;
-					else if(event.pageX - this.overflowOffset.left < o.scrollSensitivity)
-						this.scrollParent[0].scrollLeft = scrolled = this.scrollParent[0].scrollLeft - o.scrollSpeed;
-
+					if( o.scrollY ) {
+						if((this.overflowOffset.top + this.scrollParent[0].offsetHeight) - event.pageY < o.scrollSensitivity)
+							this.scrollParent[0].scrollTop = scrolled = this.scrollParent[0].scrollTop + o.scrollSpeed;
+						else if(event.pageY - this.overflowOffset.top < o.scrollSensitivity)
+							this.scrollParent[0].scrollTop = scrolled = this.scrollParent[0].scrollTop - o.scrollSpeed;
+					}
+					if( o.scrollX ) {
+						if((this.overflowOffset.left + this.scrollParent[0].offsetWidth) - event.pageX < o.scrollSensitivity)
+							this.scrollParent[0].scrollLeft = scrolled = this.scrollParent[0].scrollLeft + o.scrollSpeed;
+						else if(event.pageX - this.overflowOffset.left < o.scrollSensitivity)
+							this.scrollParent[0].scrollLeft = scrolled = this.scrollParent[0].scrollLeft - o.scrollSpeed;
+					}
 				} else {
-
-					if(event.pageY - $(document).scrollTop() < o.scrollSensitivity)
-						scrolled = $(document).scrollTop($(document).scrollTop() - o.scrollSpeed);
-					else if($(window).height() - (event.pageY - $(document).scrollTop()) < o.scrollSensitivity)
-						scrolled = $(document).scrollTop($(document).scrollTop() + o.scrollSpeed);
-
-					if(event.pageX - $(document).scrollLeft() < o.scrollSensitivity)
-						scrolled = $(document).scrollLeft($(document).scrollLeft() - o.scrollSpeed);
-					else if($(window).width() - (event.pageX - $(document).scrollLeft()) < o.scrollSensitivity)
-						scrolled = $(document).scrollLeft($(document).scrollLeft() + o.scrollSpeed);
-
+					if( o.scrollY ) {
+						if(event.pageY - $(document).scrollTop() < o.scrollSensitivity)
+							scrolled = $(document).scrollTop($(document).scrollTop() - o.scrollSpeed);
+						else if($(window).height() - (event.pageY - $(document).scrollTop()) < o.scrollSensitivity)
+							scrolled = $(document).scrollTop($(document).scrollTop() + o.scrollSpeed);
+					}
+					if( o.scrollX ) {
+						if(event.pageX - $(document).scrollLeft() < o.scrollSensitivity)
+							scrolled = $(document).scrollLeft($(document).scrollLeft() - o.scrollSpeed);
+						else if($(window).width() - (event.pageX - $(document).scrollLeft()) < o.scrollSensitivity)
+							scrolled = $(document).scrollLeft($(document).scrollLeft() + o.scrollSpeed);
+					}
 				}
 
 				if(scrolled !== false && $.ui.ddmanager && !o.dropBehaviour)
@@ -137,7 +140,7 @@
 				}
 			}
 
-			newList = document.createElement(o.listType);
+			newList = document.createElement(this.options.listType);
 
 			this.beyondMaxLevels = 0;
 
@@ -148,12 +151,12 @@
 				this._trigger("change", event, this._uiHash());
 			}
 			// If the item is below another one and is moved to the right, make it a children of it
-			else if (previousItem != null && this.positionAbs.left > previousItem.offset().left + o.tabSize) {
+			else if (previousItem != null && this.positionAbs.left > previousItem.offset().left + this.options.tabSize) {
 				this._isAllowed(previousItem, level+childLevels+1);
-				if (!previousItem.children(o.listType).length) {
+				if (!previousItem.children(this.options.listType).length) {
 					previousItem[0].appendChild(newList);
 				}
-				previousItem.children(o.listType)[0].appendChild(this.placeholder[0]);
+				previousItem.children(this.options.listType)[0].appendChild(this.placeholder[0]);
 				this._trigger("change", event, this._uiHash());
 			}
 			else {
