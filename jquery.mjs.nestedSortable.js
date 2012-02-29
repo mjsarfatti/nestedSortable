@@ -24,7 +24,7 @@
 			protectRoot: false,
 			rootID: null,
 			rtl: false,
-			isAllowed: function(item, parent) { return true; },
+			isAllowed: function(item, parent) { return true; }
 		},
 
 		_create: function() {
