@@ -17,6 +17,8 @@
 		options: {
 			tabSize: 20,
 			disableNesting: 'ui-nestedSortable-no-nesting',
+            levelMinDataAttribute: 'ui_nestedSortable_level_min',
+            levelMaxDataAttribute: 'ui_nestedSortable_level_max',
 			errorClass: 'ui-nestedSortable-error',
 			listType: 'ol',
 			maxLevels: 0,
@@ -366,6 +368,18 @@
 
 		_isAllowed: function(parentItem, levels) {
 			var o = this.options;
+            var max_level = this.currentItem.data(o.levelMaxDataAttribute);
+            var min_level = this.currentItem.data(o.levelMinDataAttribute);
+            if ((max_level && max_level < levels) || (min_level && min_level > levels)) {
+                this.placeholder.addClass(o.errorClass);
+                this.beyondMaxLevels = 1;
+                return;
+            }
+            else {
+                this.placeholder.removeClass(o.errorClass);
+                this.beyondMaxLevels = 0;
+            }
+
 			// Are we trying to nest under a no-nest or are we nesting too deep?
 			if (parentItem == null || !(parentItem.hasClass(o.disableNesting))) {
 				if (o.maxLevels < levels && o.maxLevels != 0) {
@@ -384,7 +398,6 @@
 				}
 			}
 		}
-
 	}));
 
 	$.ui.nestedSortable.prototype.options = $.extend({}, $.ui.sortable.prototype.options, $.ui.nestedSortable.prototype.options);
