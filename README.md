@@ -1,3 +1,7 @@
+### NOTE: Please use the develop branch
+
+Until further notice, the develop branch is to be considered the most stable and active one. I will only accept pull requests made on the develp branch.
+
 # nestedSortable jQuery plugin
 
 *nestedSortable* is a jQuery plugin that extends jQuery Sortable UI functionalities to nested lists.
