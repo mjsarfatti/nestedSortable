@@ -131,9 +131,10 @@
 				       			? $(this.placeholder[0].parentNode.parentNode)
 				       			: null,
 			    level = this._getLevel(this.placeholder),
-			    childLevels = this._getChildLevels(this.helper),
-			    previousItem = this.placeholder[0].previousSibling ? $(this.placeholder[0].previousSibling) : null;
+			    childLevels = this._getChildLevels(this.helper);
 
+      // To find the previous sibling in the list, keep backtracking until we hit a valid list item.
+			var previousItem = this.placeholder[0].previousSibling ? $(this.placeholder[0].previousSibling) : null;
 			if (previousItem != null) {
 				while (previousItem[0].nodeName.toLowerCase() != 'li' || previousItem[0] == this.currentItem[0] || previousItem[0] == this.helper[0]) {
 					if (previousItem[0].previousSibling) {
@@ -145,19 +146,32 @@
 				}
 			}
 
+      // To find the next sibling in the list, keep stepping forward until we hit a valid list item.
+      var nextItem = this.placeholder[0].nextSibling ? $(this.placeholder[0].nextSibling) : null;
+      if (nextItem != null) {
+        while (nextItem[0].nodeName.toLowerCase() != 'li' || nextItem[0] == this.currentItem[0] || nextItem[0] == this.helper[0]) {
+          if (nextItem[0].nextSibling) {
+            nextItem = $(nextItem[0].nextSibling);
+          } else {
+            nextItem = null;
+            break;
+          }
+        }
+      }
+
 			var newList = document.createElement(o.listType);
 
 			this.beyondMaxLevels = 0;
 			
-			// If the item is moved to the left, send it to its parent level
-			if (parentItem != null &&
+			// If the item is moved to the left, send it to its parent's level unless there are siblings below it.
+			if (parentItem != null && nextItem == null &&
 					(o.rtl && (this.positionAbs.left + this.helper.outerWidth() > parentItem.offset().left + parentItem.outerWidth()) ||
 					!o.rtl && (this.positionAbs.left < parentItem.offset().left))) {
 				parentItem.after(this.placeholder[0]);
 				this._clearEmpty(parentItem[0]);
 				this._trigger("change", event, this._uiHash());
 			}
-			// If the item is below another one and is moved to the right, make it a children of it
+			// If the item is below a sibling and is moved to the right, make it a child of that sibling.
 			else if (previousItem != null &&
 						(o.rtl && (this.positionAbs.left + this.helper.outerWidth() < previousItem.offset().left + previousItem.outerWidth() - o.tabSize) ||
 						!o.rtl && (this.positionAbs.left > previousItem.offset().left + o.tabSize))) {
