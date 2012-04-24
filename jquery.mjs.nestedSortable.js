@@ -89,6 +89,9 @@
 			//Regenerate the absolute position used for position checks
 			this.positionAbs = this._convertPositionTo("absolute");
 
+      // Find the top offset before rearrangement,
+      var previousTopOffset = this.placeholder.offset().top;
+
 			//Set the helper position
 			if(!this.options.axis || this.options.axis != "y") this.helper[0].style.left = this.position.left+'px';
 			if(!this.options.axis || this.options.axis != "x") this.helper[0].style.top = this.position.top+'px';
@@ -179,7 +182,14 @@
 				if (!previousItem.children(o.listType).length) {
 					previousItem[0].appendChild(newList);
 				}
-				previousItem.children(o.listType)[0].appendChild(this.placeholder[0]);
+        // If this item is being moved from the top, add it to the top of the list.
+        if (previousTopOffset && (previousTopOffset <= previousItem.offset().top)) {
+          previousItem.children(o.listType).prepend(this.placeholder);
+        }
+        // Otherwise, add it to the bottom of the list.
+        else {
+				  previousItem.children(o.listType)[0].appendChild(this.placeholder[0]);
+        }
 				this._trigger("change", event, this._uiHash());
 			}
 			else {
