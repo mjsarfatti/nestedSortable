@@ -69,6 +69,10 @@
 			color:#8a1f11;
 		}
 
+    .mjs-nestedSortable-error {
+      background: red;
+    }
+
 		ol {
 			margin: 0;
 			padding: 0;
@@ -472,7 +476,14 @@ setName[n] =>
 			revert: 250,
 			tabSize: 25,
 			tolerance: 'pointer',
-			toleranceElement: '> div'
+			toleranceElement: '> div',
+      protectRoot: false,
+      keepInContainer: false,
+      maintainNestingLevel: false,
+      showErrorDiv: false,
+      isAllowed: function(parent, item) {
+        return false;
+      }
 		});
 
 		$('#serialize').click(function(){

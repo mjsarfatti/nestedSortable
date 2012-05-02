@@ -54,6 +54,10 @@ Also, the default list type is `<ol>`.
 	<dd>The class given to the placeholder in case of error. Default: <b>ui-nestedSortable-error</b></dd>
 	<dt>listType</dt>
 	<dd>The list type used (ordered or unordered). Default: <b>ol</b></dd>
+	<dt>keepInParent</dt>
+	<dd>Whether to force nodes be sorted only within their original parent. Default: <b>false</b></dd>
+	<dt>maintainNestingLevel</dt>
+  <dd>Whether nodes should be forced to stay within their original nesting level. Default: <b>false</b></dd>
 	<dt>maxLevels</dt>
 	<dd>The maximum depth of nested items the list can accept. If set to '0' the levels are unlimited. Default: <b>0</b></dd>
 	<dt>protectRoot</dt>
@@ -64,6 +68,8 @@ Also, the default list type is `<ol>`.
 	<dd>Set this to true if you have a right-to-left page. Default: <b>false</b></dd>
 	<dt>isAllowed (function)</dt>
 	<dd>You can specify a custom function to verify if a drop location is allowed. Default: <b>function(item, parent) { return true; }</b></dd>
+	<dt>showErrorDiv</dt>
+	<dd>Whether a failed isAllowed method shows a placeholder with the error class or shows no change at all. Default: <b>true</b></dd>
 </dl>
 
 ## Custom Methods
