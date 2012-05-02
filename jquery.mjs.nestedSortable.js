@@ -26,7 +26,7 @@
 			rtl: false,
             maintainNestingLevel: false, // if true, you can not move nodes to different levels of nesting
             showErrorDiv: true, // show the error div or just not show a drop area
-            keepInContainer: false, // if true only allows you to rearrange within its parent container
+            keepInParent: false, // if true only allows you to rearrange within its parent container
 			isAllowed: function(item, parent) { return true; }
 		},
 
@@ -109,7 +109,7 @@
 					&&	this.placeholder[intersection == 1 ? "next" : "prev"]()[0] != itemElement //no useless actions that have been done before
 					&&	!$.contains(this.placeholder[0], itemElement) //no action if the item moved is the parent of the item checked
 					&& (this.options.type == 'semi-dynamic' ? !$.contains(this.element[0], itemElement) : true)
-					&& (!o.keepInContainer || itemElement.parentNode == this.placeholder[0].parentNode) // only rearrange items within the same container
+					&& (!o.keepInParent || itemElement.parentNode == this.placeholder[0].parentNode) // only rearrange items within the same container
                     && (!o.maintainNestingLevel || (this._getLevel(this.currentItem) === this._getLevel($(itemElement)))) // maintain the nesting level of node
                     && (o.showErrorDiv || o.isAllowed(itemElement.parentNode, this.currentItem[0]))
 				) {
