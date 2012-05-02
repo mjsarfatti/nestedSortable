@@ -24,6 +24,9 @@
 			protectRoot: false,
 			rootID: null,
 			rtl: false,
+            allowNesting: true, // if false, you can not move nodes to different levels of nesting
+            showErrorDiv: true, // show the error div or just not show a drop area
+            keepInContainer: false, // if true only allows you to rearrange within its parent container
 			isAllowed: function(item, parent) { return true; }
 		},
 
@@ -104,7 +107,8 @@
 					&&	this.placeholder[intersection == 1 ? "next" : "prev"]()[0] != itemElement //no useless actions that have been done before
 					&&	!$.contains(this.placeholder[0], itemElement) //no action if the item moved is the parent of the item checked
 					&& (this.options.type == 'semi-dynamic' ? !$.contains(this.element[0], itemElement) : true)
-					//&& itemElement.parentNode == this.placeholder[0].parentNode // only rearrange items within the same container
+					&& (!o.keepInContainer || itemElement.parentNode == this.placeholder[0].parentNode) // only rearrange items within the same container
+                    && (o.showErrorDiv || o.isAllowed(itemElement, this.placeholder[0].parentNode.parentNode))
 				) {
 
 					$(itemElement).mouseenter();
@@ -150,7 +154,7 @@
 			this.beyondMaxLevels = 0;
 			
 			// If the item is moved to the left, send it to its parent level
-			if (parentItem != null &&
+			if (o.allowNesting && parentItem != null &&
 					(o.rtl && (this.positionAbs.left + this.helper.outerWidth() > parentItem.offset().left + parentItem.outerWidth()) ||
 					!o.rtl && (this.positionAbs.left < parentItem.offset().left))) {
 				parentItem.after(this.placeholder[0]);
@@ -158,7 +162,7 @@
 				this._trigger("change", event, this._uiHash());
 			}
 			// If the item is below another one and is moved to the right, make it a children of it
-			else if (previousItem != null &&
+			else if (o.allowNesting && previousItem != null &&
 						(o.rtl && (this.positionAbs.left + this.helper.outerWidth() < previousItem.offset().left + previousItem.outerWidth() - o.tabSize) ||
 						!o.rtl && (this.positionAbs.left > previousItem.offset().left + o.tabSize))) {
 				this._isAllowed(previousItem, level, level+childLevels+1);
@@ -374,7 +378,8 @@
 			// Is the root protected?
 			// Are we trying to nest under a no-nest?
 			// Are we nesting too deep?
-			if (!o.isAllowed(parentItem, this.placeholder) ||
+            // (note -Joe) old below - if (!o.isAllowed(parentItem, this.placeholder) ||
+			if (!o.isAllowed(this.currentItem[0], parentItem) ||
 				parentItem && parentItem.hasClass(o.disableNesting) ||
 				o.protectRoot && (parentItem == null && !isRoot || isRoot && level > 1)) {
 					this.placeholder.addClass(o.errorClass);
@@ -387,6 +392,7 @@
 				if (o.maxLevels < levels && o.maxLevels != 0) {
 					this.placeholder.addClass(o.errorClass);
 					this.beyondMaxLevels = levels - o.maxLevels;
+
 				} else {
 					this.placeholder.removeClass(o.errorClass);
 					this.beyondMaxLevels = 0;
