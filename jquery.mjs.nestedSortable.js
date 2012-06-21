@@ -345,7 +345,8 @@
 
 			if (this.options.listType) {
 				var list = item.closest(this.options.listType);
-				while (!list.is('.ui-sortable')) {
+				while (list && list.length > 0 && 
+                    	!list.is('.ui-sortable')) {
 					level++;
 					list = list.parent().closest(this.options.listType);
 				}
@@ -369,7 +370,8 @@
 
 		_isAllowed: function(parentItem, level, levels) {
 			var o = this.options,
-				isRoot = $(this.domPosition.parent).hasClass('ui-sortable') ? true : false;
+				isRoot = $(this.domPosition.parent).hasClass('ui-sortable') ? true : false,
+				maxLevels = this.placeholder.closest('.ui-sortable').nestedSortable('option', 'maxLevels'); // this takes into account the maxLevels set to the recipient list
 
 			// Is the root protected?
 			// Are we trying to nest under a no-nest?
@@ -378,15 +380,15 @@
 				parentItem && parentItem.hasClass(o.disableNesting) ||
 				o.protectRoot && (parentItem == null && !isRoot || isRoot && level > 1)) {
 					this.placeholder.addClass(o.errorClass);
-					if (o.maxLevels < levels && o.maxLevels != 0) {
-						this.beyondMaxLevels = levels - o.maxLevels;
+					if (maxLevels < levels && maxLevels != 0) {
+						this.beyondMaxLevels = levels - maxLevels;
 					} else {
 						this.beyondMaxLevels = 1;
 					}
 			} else {
-				if (o.maxLevels < levels && o.maxLevels != 0) {
+				if (maxLevels < levels && maxLevels != 0) {
 					this.placeholder.addClass(o.errorClass);
-					this.beyondMaxLevels = levels - o.maxLevels;
+					this.beyondMaxLevels = levels - maxLevels;
 				} else {
 					this.placeholder.removeClass(o.errorClass);
 					this.beyondMaxLevels = 0;
