@@ -1,7 +1,3 @@
-### NOTE: Please use the develop branch
-
-Until further notice, the develop branch is to be considered the most stable and active one. I will only accept pull requests made on the develp branch.
-
 # nestedSortable jQuery plugin
 
 *nestedSortable* is a jQuery plugin that extends jQuery Sortable UI functionalities to nested lists.
@@ -12,8 +8,8 @@ Until further notice, the develop branch is to be considered the most stable and
 - Items can be sorted in their own list, moved across the tree, or nested under other items.
 - Sublists are created and deleted on the fly
 - All jQuery Sortable options, events and methods are available
-- It is possible to define elements that will not accept a new nested item/list
-- It is possible to define a maximum depth for nested items
+- It is possible to define elements that will not accept a new nested item/list and a maximum depth for nested items
+- The root level can be protected
 
 ## Usage
 
@@ -31,21 +27,43 @@ Until further notice, the develop branch is to be considered the most stable and
 </ol>
 ```
 
+```
+	$(document).ready(function(){
+
+		$('.sortable').nestedSortable({
+			handle: 'div',
+			items: 'li',
+			toleranceElement: '> div'
+		});
+
+	});
+```
+
 Please note: every `<li>` must have either one or two direct children, the first one being a container element (such as `<div>` in the above example), and the (optional) second one being the nested list. The container element has to be set as the 'toleranceElement' in the options, and this, or one of its children, as the 'handle'.
+
+Also, the default list type is `<ol>`.
 
 ## Custom Options
 
 <dl>
 	<dt>tabSize</dt>
 	<dd>How far right or left (in pixels) the item has to travel in order to be nested or to be sent outside its current list. Default: <b>20</b></dd>
-	<dt>disableNesting </dt>
+	<dt>disableNesting</dt>
 	<dd>The class name of the items that will not accept nested lists. Default: <b>ui-nestedSortable-no-nesting</b></dd>
-	<dt>errorClass </dt>
+	<dt>errorClass</dt>
 	<dd>The class given to the placeholder in case of error. Default: <b>ui-nestedSortable-error</b></dd>
-	<dt>listType </dt>
+	<dt>listType</dt>
 	<dd>The list type used (ordered or unordered). Default: <b>ol</b></dd>
-	<dt>maxLevels </dt>
+	<dt>maxLevels</dt>
 	<dd>The maximum depth of nested items the list can accept. If set to '0' the levels are unlimited. Default: <b>0</b></dd>
+	<dt>protectRoot</dt>
+	<dd>Wether to protect the root level (i.e. root items can be sorted but not nested, sub-items cannot become root items). Default: <b>false</b></dd>
+	<dt>rootID</dt>
+	<dd>The id given to the root element (set this to whatever suits your data structure). Default: <b>null</b></dd>
+	<dt>rtl</dt>
+	<dd>Set this to true if you have a right-to-left page. Default: <b>false</b></dd>
+	<dt>isAllowed (function)</dt>
+	<dd>You can specify a custom function to verify if a drop location is allowed. Default: <b>function(parent, item) { return true; }</b></dd>
 </dl>
 
 ## Custom Methods
@@ -98,7 +116,7 @@ Tested with: IE 6/7/8, Firefox 3.6/4, Chrome, Safari 3
 
 ## License
 
-This work is licensed under a Creative Commons Attribution-ShareAlike 3.0 Unported License.
+This work is licensed under the MIT License.
 
-This work is *pizzaware*. If it saved your life, or you just feel good at heart, please consider offering me a pizza. This can be done in two ways: (1) use the Paypal button at the bottom of the project's [home page](http://mjsarfatti.com/sandbox/nestedSortable); (2) send me cash via traditional mail to my home address in Italy. Is the second method legal? It is in Italy if you use Posta assicurata. You should check with your local laws if you live elsewhere.
+This work is *pizzaware*. If it saved your life, or you just feel good at heart, please consider offering me a pizza. This can be done in two ways: (1) follow [this link](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=RSJEW3N9PRMYY&lc=IT&item_name=Manuele%20Sarfatti&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted) to donate through paypal; (2) send me cash via traditional mail to my home address in Italy. Is the second method legal? It is in Italy if you use Posta assicurata. You should check with your local laws if you live elsewhere.
 	
