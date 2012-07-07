@@ -41,19 +41,21 @@
 			if (!this.element.is(this.options.listType))
 				throw new Error('nestedSortable: Please check that the listType option is set to your actual list type');
 
-			var self = this;
-			// this goes through any any any list item, but what if a list is present but is not part of the sortable?
-			this.element.find('li').each(function() {
-				var $li = $(this);
-				if ($li.children(self.options.listType).length) {
-					$li.addClass(self.options.branchClass);
-					// expand/collapse class only if they have children
-					if (self.options.startCollapsed) $li.addClass(self.options.collapsedClass);
-					else $li.addClass(self.options.expandedClass);
-				} else {
-					$li.addClass(self.options.leafClass);
-				}
-			})
+			if (this.options.isTree) {
+				var self = this;
+				// this goes through any any any list item, but what if a list is present but is not part of the sortable?
+				this.element.find('li').each(function() {
+					var $li = $(this);
+					if ($li.children(self.options.listType).length) {
+						$li.addClass(self.options.branchClass);
+						// expand/collapse class only if they have children
+						if (self.options.startCollapsed) $li.addClass(self.options.collapsedClass);
+						else $li.addClass(self.options.expandedClass);
+					} else {
+						$li.addClass(self.options.leafClass);
+					}
+				})
+			}
 
 			if (this.options.isTree) this.options.tolerance = 'intersect';
 
@@ -140,10 +142,9 @@
 					$(itemElement).mouseenter();
 
 					// if the element has children and they are hidden, show them after some time
-					if ($(itemElement).hasClass(o.collapsedClass)) {
+					if (o.isTree && $(itemElement).hasClass(o.collapsedClass)) {
 						if (!this.hovering) {
 							this.hovering = window.setTimeout(function() { $(itemElement).removeClass(o.collapsedClass).addClass(o.expandedClass) }, o.expandOnHover);
-							console.log('started '+this.hovering);
 						}
 					}
 
@@ -151,7 +152,7 @@
 
 					if (this.options.tolerance == "pointer" || this._intersectsWithSides(item)) {
 						$(itemElement).mouseleave();
-						this.hovering && window.clearTimeout(this.hovering);console.log('cleared '+this.hovering);
+						this.hovering && window.clearTimeout(this.hovering);
 						this.hovering = null;
 						this._rearrange(event, item);
 					} else {
@@ -209,7 +210,7 @@
 					!o.rtl && (this.positionAbs.left < parentItem.offset().left))) {
 
 				parentItem.after(this.placeholder[0]);
-				if (parentItem.children(o.listItem).children('li:visible:not(.ui-sortable-helper)').length < 1) {
+				if (o.isTree && parentItem.children(o.listItem).children('li:visible:not(.ui-sortable-helper)').length < 1) {
 					parentItem.removeClass(this.options.branchClass + ' ' + this.options.expandedClass)
 							  .addClass(this.options.leafClass);
 				}
@@ -225,9 +226,8 @@
 				this._isAllowed(previousItem, level, level+childLevels+1);
 
 				if (!previousItem.children(o.listType).length) {
-					previousItem.removeClass(o.leafClass)
-								   .addClass(o.branchClass + ' ' + o.expandedClass)
-								   .append(newList);
+					previousItem[0].appendChild(newList);
+					o.isTree && previousItem.removeClass(o.leafClass).addClass(o.branchClass + ' ' + o.expandedClass);
 				}
 
 		        // If this item is being moved from the top, add it to the top of the list.
@@ -410,19 +410,17 @@
 		},
 
 		_clearEmpty: function(item) {
+			var o = this.options;
 
-			var emptyList = $(item).children(this.options.listType);
+			var emptyList = $(item).children(o.listType);
 
 			if (emptyList.length && !emptyList.children().length) {
-				$(item).removeClass(this.options.branchClass + ' ' + this.options.expandedClass)
-					   .addClass(this.options.leafClass);
+				o.isTree && $(item).removeClass(o.branchClass + ' ' + o.expandedClass).addClass(o.leafClass);
 				emptyList.remove();
-			} else if (emptyList.length && emptyList.children().length && emptyList.is(':visible')) {
-				$(item).removeClass(this.options.leafClass)
-					   .addClass(this.options.branchClass + ' ' + this.options.expandedClass);
-			} else if (emptyList.length && emptyList.children().length && !emptyList.is(':visible')) {
-				$(item).removeClass(this.options.leafClass)
-					   .addClass(this.options.branchClass + ' ' + this.options.collapsedClass);
+			} else if (o.isTree && emptyList.length && emptyList.children().length && emptyList.is(':visible')) {
+				$(item).removeClass(o.leafClass).addClass(o.branchClass + ' ' + o.expandedClass);
+			} else if (o.isTree && emptyList.length && emptyList.children().length && !emptyList.is(':visible')) {
+				$(item).removeClass(o.leafClass).addClass(o.branchClass + ' ' + o.collapsedClass);
 			}
 
 		},
