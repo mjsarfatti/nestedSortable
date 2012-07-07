@@ -29,9 +29,9 @@
 			isTree: false,
 			branchClass: 'mjs-nestedSortable-branch',
 			leafClass: 'mjs-nestedSortable-leaf',
-			collapsedClass: 'mjs-nestedSortable-collapse',
-			expandedClass: 'mjs-nestedSortable-expand',
-			expandOnHover: 200,
+			collapsedClass: 'mjs-nestedSortable-collapsed',
+			expandedClass: 'mjs-nestedSortable-expanded',
+			expandOnHover: 500,
 			startCollapsed: true
 		},
 
@@ -41,18 +41,21 @@
 			if (!this.element.is(this.options.listType))
 				throw new Error('nestedSortable: Please check that the listType option is set to your actual list type');
 
+			var self = this;
 			// this goes through any any any list item, but what if a list is present but is not part of the sortable?
 			this.element.find('li').each(function() {
 				var $li = $(this);
-				if ($li.children('ul').length) {
-					$li.addClass(this.options.branchClass);
+				if ($li.children(self.options.listType).length) {
+					$li.addClass(self.options.branchClass);
 					// expand/collapse class only if they have children
-					if (this.options.startCollapsed) $li.addClass(this.options.collapsedClass);
-					else $li.addClass(this.options.expandedClass);
+					if (self.options.startCollapsed) $li.addClass(self.options.collapsedClass);
+					else $li.addClass(self.options.expandedClass);
 				} else {
-					$li.addClass(this.options.leafClass);
+					$li.addClass(self.options.leafClass);
 				}
 			})
+
+			if (this.options.isTree) this.options.tolerance = 'intersect';
 
 			return $.ui.sortable.prototype._create.apply(this, arguments);
 		},
@@ -111,12 +114,14 @@
 			//Regenerate the absolute position used for position checks
 			this.positionAbs = this._convertPositionTo("absolute");
 
-      // Find the top offset before rearrangement,
-      var previousTopOffset = this.placeholder.offset().top;
+			// Find the top offset before rearrangement,
+			var previousTopOffset = this.placeholder.offset().top;
 
 			//Set the helper position
 			if(!this.options.axis || this.options.axis != "y") this.helper[0].style.left = this.position.left+'px';
 			if(!this.options.axis || this.options.axis != "x") this.helper[0].style.top = this.position.top+'px';
+
+			this.hovering = this.hovering ? this.hovering : null;
 
 			//Rearrange
 			for (var i = this.items.length - 1; i >= 0; i--) {
@@ -136,14 +141,18 @@
 
 					// if the element has children and they are hidden, show them after some time
 					if ($(itemElement).hasClass(o.collapsedClass)) {
-						TOID = window.setTimeout(function() { $(itemElement).removeClass(o.collapsedClass).addClass(o.expandedClass) }, o.expandOnHover);
+						if (!this.hovering) {
+							this.hovering = window.setTimeout(function() { $(itemElement).removeClass(o.collapsedClass).addClass(o.expandedClass) }, o.expandOnHover);
+							console.log('started '+this.hovering);
+						}
 					}
 
 					this.direction = intersection == 1 ? "down" : "up";
 
-					if ( (this.options.tolerance == "pointer" && !o.isTree) || this._intersectsWithSides(item)) {
+					if (this.options.tolerance == "pointer" || this._intersectsWithSides(item)) {
 						$(itemElement).mouseleave();
-						window.clearTimeout(TOID);
+						this.hovering && window.clearTimeout(this.hovering);console.log('cleared '+this.hovering);
+						this.hovering = null;
 						this._rearrange(event, item);
 					} else {
 						break;
@@ -198,21 +207,27 @@
 			if (parentItem != null && nextItem == null &&
 					(o.rtl && (this.positionAbs.left + this.helper.outerWidth() > parentItem.offset().left + parentItem.outerWidth()) ||
 					!o.rtl && (this.positionAbs.left < parentItem.offset().left))) {
+
 				parentItem.after(this.placeholder[0]);
+				if (parentItem.children(o.listItem).children('li:visible:not(.ui-sortable-helper)').length < 1) {
+					parentItem.removeClass(this.options.branchClass + ' ' + this.options.expandedClass)
+							  .addClass(this.options.leafClass);
+				}
 				this._clearEmpty(parentItem[0]);
 				this._trigger("change", event, this._uiHash());
 			}
 			// If the item is below a sibling and is moved to the right, make it a child of that sibling.
 			else if (previousItem != null &&
+						(previousItem.children(o.listType).length && previousItem.children(o.listType).is(':visible') || !previousItem.children(o.listType).length) &&
 						(o.rtl && (this.positionAbs.left + this.helper.outerWidth() < previousItem.offset().left + previousItem.outerWidth() - o.tabSize) ||
 						!o.rtl && (this.positionAbs.left > previousItem.offset().left + o.tabSize))) {
 
 				this._isAllowed(previousItem, level, level+childLevels+1);
 
 				if (!previousItem.children(o.listType).length) {
-					previousItem[0].removeClass(o.leafClass)
+					previousItem.removeClass(o.leafClass)
 								   .addClass(o.branchClass + ' ' + o.expandedClass)
-								   .appendChild(newList);
+								   .append(newList);
 				}
 
 		        // If this item is being moved from the top, add it to the top of the list.
@@ -261,13 +276,19 @@
 
 			}
 
+			$.ui.sortable.prototype._mouseStop.apply(this, arguments);
+
+		},
+
+		_clear: function(event, noPropagation) {
+
+			$.ui.sortable.prototype._clear.apply(this, arguments);
+
 			// Clean last empty ul/ol
 			for (var i = this.items.length - 1; i >= 0; i--) {
 				var item = this.items[i].item[0];
 				this._clearEmpty(item);
 			}
-
-			$.ui.sortable.prototype._mouseStop.apply(this, arguments);
 
 		},
 
@@ -391,10 +412,17 @@
 		_clearEmpty: function(item) {
 
 			var emptyList = $(item).children(this.options.listType);
+
 			if (emptyList.length && !emptyList.children().length) {
 				$(item).removeClass(this.options.branchClass + ' ' + this.options.expandedClass)
 					   .addClass(this.options.leafClass);
 				emptyList.remove();
+			} else if (emptyList.length && emptyList.children().length && emptyList.is(':visible')) {
+				$(item).removeClass(this.options.leafClass)
+					   .addClass(this.options.branchClass + ' ' + this.options.expandedClass);
+			} else if (emptyList.length && emptyList.children().length && !emptyList.is(':visible')) {
+				$(item).removeClass(this.options.leafClass)
+					   .addClass(this.options.branchClass + ' ' + this.options.collapsedClass);
 			}
 
 		},
