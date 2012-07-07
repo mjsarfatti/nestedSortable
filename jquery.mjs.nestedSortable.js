@@ -1,6 +1,6 @@
 /*
  * jQuery UI Nested Sortable
- * v 1.3.5 / 21 jun 2012
+ * v 1.4 / 9 jul 2012
  * http://mjsarfatti.com/code/nestedSortable
  *
  * Depends on:
@@ -24,14 +24,35 @@
 			protectRoot: false,
 			rootID: null,
 			rtl: false,
-			isAllowed: function(item, parent) { return true; }
+			isAllowed: function(item, parent) { return true; },
+
+			isTree: false,
+			branchClass: 'mjs-nestedSortable-branch',
+			leafClass: 'mjs-nestedSortable-leaf',
+			collapsedClass: 'mjs-nestedSortable-collapse',
+			expandedClass: 'mjs-nestedSortable-expand',
+			expandOnHover: 200,
+			startCollapsed: true
 		},
 
 		_create: function() {
 			this.element.data('sortable', this.element.data('nestedSortable'));
 
 			if (!this.element.is(this.options.listType))
-				throw new Error('nestedSortable: Please check the listType option is set to your actual list type');
+				throw new Error('nestedSortable: Please check that the listType option is set to your actual list type');
+
+			// this goes through any any any list item, but what if a list is present but is not part of the sortable?
+			this.element.find('li').each(function() {
+				var $li = $(this);
+				if ($li.children('ul').length) {
+					$li.addClass(this.options.branchClass);
+					// expand/collapse class only if they have children
+					if (this.options.startCollapsed) $li.addClass(this.options.collapsedClass);
+					else $li.addClass(this.options.expandedClass);
+				} else {
+					$li.addClass(this.options.leafClass);
+				}
+			})
 
 			return $.ui.sortable.prototype._create.apply(this, arguments);
 		},
@@ -44,6 +65,7 @@
 		},
 
 		_mouseDrag: function(event) {
+			var o = this.options;
 
 			//Compute the helpers position
 			this.position = this._generatePosition(event);
@@ -55,7 +77,7 @@
 
 			//Do scrolling
 			if(this.options.scroll) {
-				var o = this.options, scrolled = false;
+				var scrolled = false;
 				if(this.scrollParent[0] != document && this.scrollParent[0].tagName != 'HTML') {
 
 					if((this.overflowOffset.top + this.scrollParent[0].offsetHeight) - event.pageY < o.scrollSensitivity)
@@ -112,10 +134,16 @@
 
 					$(itemElement).mouseenter();
 
+					// if the element has children and they are hidden, show them after some time
+					if ($(itemElement).hasClass(o.collapsedClass)) {
+						TOID = window.setTimeout(function() { $(itemElement).removeClass(o.collapsedClass).addClass(o.expandedClass) }, o.expandOnHover);
+					}
+
 					this.direction = intersection == 1 ? "down" : "up";
 
-					if (this.options.tolerance == "pointer" || this._intersectsWithSides(item)) {
+					if ( (this.options.tolerance == "pointer" && !o.isTree) || this._intersectsWithSides(item)) {
 						$(itemElement).mouseleave();
+						window.clearTimeout(TOID);
 						this._rearrange(event, item);
 					} else {
 						break;
@@ -136,7 +164,7 @@
 			    level = this._getLevel(this.placeholder),
 			    childLevels = this._getChildLevels(this.helper);
 
-      // To find the previous sibling in the list, keep backtracking until we hit a valid list item.
+			// To find the previous sibling in the list, keep backtracking until we hit a valid list item.
 			var previousItem = this.placeholder[0].previousSibling ? $(this.placeholder[0].previousSibling) : null;
 			if (previousItem != null) {
 				while (previousItem[0].nodeName.toLowerCase() != 'li' || previousItem[0] == this.currentItem[0] || previousItem[0] == this.helper[0]) {
@@ -149,18 +177,18 @@
 				}
 			}
 
-      // To find the next sibling in the list, keep stepping forward until we hit a valid list item.
-      var nextItem = this.placeholder[0].nextSibling ? $(this.placeholder[0].nextSibling) : null;
-      if (nextItem != null) {
-        while (nextItem[0].nodeName.toLowerCase() != 'li' || nextItem[0] == this.currentItem[0] || nextItem[0] == this.helper[0]) {
-          if (nextItem[0].nextSibling) {
-            nextItem = $(nextItem[0].nextSibling);
-          } else {
-            nextItem = null;
-            break;
-          }
-        }
-      }
+			// To find the next sibling in the list, keep stepping forward until we hit a valid list item.
+			var nextItem = this.placeholder[0].nextSibling ? $(this.placeholder[0].nextSibling) : null;
+			if (nextItem != null) {
+				while (nextItem[0].nodeName.toLowerCase() != 'li' || nextItem[0] == this.currentItem[0] || nextItem[0] == this.helper[0]) {
+					if (nextItem[0].nextSibling) {
+						nextItem = $(nextItem[0].nextSibling);
+					} else {
+						nextItem = null;
+						break;
+					}
+				}
+			}
 
 			var newList = document.createElement(o.listType);
 
@@ -178,18 +206,24 @@
 			else if (previousItem != null &&
 						(o.rtl && (this.positionAbs.left + this.helper.outerWidth() < previousItem.offset().left + previousItem.outerWidth() - o.tabSize) ||
 						!o.rtl && (this.positionAbs.left > previousItem.offset().left + o.tabSize))) {
+
 				this._isAllowed(previousItem, level, level+childLevels+1);
+
 				if (!previousItem.children(o.listType).length) {
-					previousItem[0].appendChild(newList);
+					previousItem[0].removeClass(o.leafClass)
+								   .addClass(o.branchClass + ' ' + o.expandedClass)
+								   .appendChild(newList);
 				}
-        // If this item is being moved from the top, add it to the top of the list.
-        if (previousTopOffset && (previousTopOffset <= previousItem.offset().top)) {
-          previousItem.children(o.listType).prepend(this.placeholder);
-        }
-        // Otherwise, add it to the bottom of the list.
-        else {
-				  previousItem.children(o.listType)[0].appendChild(this.placeholder[0]);
-        }
+
+		        // If this item is being moved from the top, add it to the top of the list.
+		        if (previousTopOffset && (previousTopOffset <= previousItem.offset().top)) {
+		        	previousItem.children(o.listType).prepend(this.placeholder);
+		        }
+		        // Otherwise, add it to the bottom of the list.
+		        else {
+					previousItem.children(o.listType)[0].appendChild(this.placeholder[0]);
+				}
+
 				this._trigger("change", event, this._uiHash());
 			}
 			else {
@@ -358,6 +392,8 @@
 
 			var emptyList = $(item).children(this.options.listType);
 			if (emptyList.length && !emptyList.children().length) {
+				$(item).removeClass(this.options.branchClass + ' ' + this.options.expandedClass)
+					   .addClass(this.options.leafClass);
 				emptyList.remove();
 			}
 
