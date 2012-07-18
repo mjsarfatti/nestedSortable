@@ -302,8 +302,10 @@
 
 		_intersectsWithSides: function(item) {
 
-			var isOverBottomHalf = $.ui.isOverAxis(this.positionAbs.top + this.offset.click.top, item.top + (item.height*.85), item.height),
-				isOverTopHalf = $.ui.isOverAxis(this.positionAbs.top + this.offset.click.top, item.top - (item.height*.85), item.height),
+			var half = this.options.isTree ? .8 : .5;
+
+			var isOverBottomHalf = $.ui.isOverAxis(this.positionAbs.top + this.offset.click.top, item.top + (item.height*half), item.height),
+				isOverTopHalf = $.ui.isOverAxis(this.positionAbs.top + this.offset.click.top, item.top - (item.height*half), item.height),
 				isOverRightHalf = $.ui.isOverAxis(this.positionAbs.left + this.offset.click.left, item.left + (item.width/2), item.width),
 				verticalDirection = this._getDragVerticalDirection(),
 				horizontalDirection = this._getDragHorizontalDirection();
