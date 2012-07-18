@@ -31,7 +31,8 @@
 			leafClass: 'mjs-nestedSortable-leaf',
 			collapsedClass: 'mjs-nestedSortable-collapsed',
 			expandedClass: 'mjs-nestedSortable-expanded',
-			expandOnHover: 500,
+			hoveringClass: 'mjs-nestedSortable-hovering',
+			expandOnHover: 700,
 			startCollapsed: true
 		},
 
@@ -124,6 +125,7 @@
 			if(!this.options.axis || this.options.axis != "x") this.helper[0].style.top = this.position.top+'px';
 
 			this.hovering = this.hovering ? this.hovering : null;
+			this.mouseentered = this.mouseentered ? this.mouseentered : false;
 
 			//Rearrange
 			for (var i = this.items.length - 1; i >= 0; i--) {
@@ -139,12 +141,21 @@
 					//&& itemElement.parentNode == this.placeholder[0].parentNode // only rearrange items within the same container
 				) {
 
-					$(itemElement).mouseenter();
+					if (!this.mouseentered) {
+						$(itemElement).mouseenter();
+						this.mouseentered = true;
+					}
 
 					// if the element has children and they are hidden, show them after some time
-					if (o.isTree && $(itemElement).hasClass(o.collapsedClass)) {
+					if (o.isTree && $(itemElement).hasClass(o.collapsedClass) && o.expandOnHover) {
 						if (!this.hovering) {
-							this.hovering = window.setTimeout(function() { $(itemElement).removeClass(o.collapsedClass).addClass(o.expandedClass) }, o.expandOnHover);
+							$(itemElement).addClass(o.hoveringClass);
+							var self = this;
+							this.hovering = window.setTimeout(function() {
+								$(itemElement).removeClass(o.collapsedClass).addClass(o.expandedClass);
+								self.refreshPositions();
+								self._trigger("expand", event, self._uiHash());
+							}, o.expandOnHover);
 						}
 					}
 
@@ -152,6 +163,8 @@
 
 					if (this.options.tolerance == "pointer" || this._intersectsWithSides(item)) {
 						$(itemElement).mouseleave();
+						this.mouseentered = false;
+						$(itemElement).removeClass(o.hoveringClass);
 						this.hovering && window.clearTimeout(this.hovering);
 						this.hovering = null;
 						this._rearrange(event, item);
@@ -276,7 +289,30 @@
 
 			}
 
+
+			// Clear the hovering timeout, just to be sure
+			$('.'+this.options.hoveringClass).mouseleave().removeClass(this.options.hoveringClass);
+			this.mouseentered = false;
+			this.hovering && window.clearTimeout(this.hovering);
+			this.hovering = null;
+
 			$.ui.sortable.prototype._mouseStop.apply(this, arguments);
+
+		},
+
+		_intersectsWithSides: function(item) {
+
+			var isOverBottomHalf = $.ui.isOverAxis(this.positionAbs.top + this.offset.click.top, item.top + (item.height*.85), item.height),
+				isOverTopHalf = $.ui.isOverAxis(this.positionAbs.top + this.offset.click.top, item.top - (item.height*.85), item.height),
+				isOverRightHalf = $.ui.isOverAxis(this.positionAbs.left + this.offset.click.left, item.left + (item.width/2), item.width),
+				verticalDirection = this._getDragVerticalDirection(),
+				horizontalDirection = this._getDragHorizontalDirection();
+
+			if (this.floating && horizontalDirection) {
+				return ((horizontalDirection == "right" && isOverRightHalf) || (horizontalDirection == "left" && !isOverRightHalf));
+			} else {
+				return verticalDirection && ((verticalDirection == "down" && isOverBottomHalf) || (verticalDirection == "up" && isOverTopHalf));
+			}
 
 		},
 
