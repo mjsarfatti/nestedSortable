@@ -63,7 +63,7 @@ Also, the default list type is `<ol>`.
 	<dt>rtl</dt>
 	<dd>Set this to true if you have a right-to-left page. Default: <b>false</b></dd>
 	<dt>isAllowed (function)</dt>
-	<dd>You can specify a custom function to verify if a drop location is allowed. Default: <b>function(parent, item) { return true; }</b></dd>
+	<dd>You can specify a custom function to verify if a drop location is allowed. Default: <b>function(item, parent) { return true; }</b></dd>
 </dl>
 
 ## Custom Methods
