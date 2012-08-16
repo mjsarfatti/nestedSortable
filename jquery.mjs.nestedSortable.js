@@ -401,7 +401,7 @@
 			// Is the root protected?
 			// Are we trying to nest under a no-nest?
 			// Are we nesting too deep?
-			if (!o.isAllowed(parentItem, this.placeholder) ||
+			if (!o.isAllowed(this.placeholder, parentItem) ||
 				parentItem && parentItem.hasClass(o.disableNesting) ||
 				o.protectRoot && (parentItem == null && !isRoot || isRoot && level > 1)) {
 					this.placeholder.addClass(o.errorClass);
