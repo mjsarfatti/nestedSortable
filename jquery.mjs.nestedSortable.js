@@ -23,8 +23,9 @@
 			maxLevels: 0,
 			protectRoot: false,
 			rootID: null,
+			doNotClear: false,
 			rtl: false,
-			isAllowed: function(item, parent) { return true; },
+			isAllowed: function(placeholder, placeholderParent, originalItem) { return true; },
 
 			isTree: false,
 			branchClass: 'mjs-nestedSortable-branch',
@@ -452,7 +453,7 @@
 
 			var emptyList = $(item).children(o.listType);
 
-			if (emptyList.length && !emptyList.children().length) {
+			if (emptyList.length && !emptyList.children().length && !o.doNotClear) {
 				o.isTree && $(item).removeClass(o.branchClass + ' ' + o.expandedClass).addClass(o.leafClass);
 				emptyList.remove();
 			} else if (o.isTree && emptyList.length && emptyList.children().length && emptyList.is(':visible')) {
@@ -500,7 +501,7 @@
 			// Is the root protected?
 			// Are we trying to nest under a no-nest?
 			// Are we nesting too deep?
-			if (!o.isAllowed(parentItem, this.placeholder) ||
+			if (!o.isAllowed(this.placeholder, parentItem, this.currentItem) ||
 				parentItem && parentItem.hasClass(o.disableNesting) ||
 				o.protectRoot && (parentItem == null && !isRoot || isRoot && level > 1)) {
 					this.placeholder.addClass(o.errorClass);

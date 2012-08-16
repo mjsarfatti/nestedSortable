@@ -63,7 +63,7 @@ Also, the default list type is `<ol>`.
 	<dt>rtl</dt>
 	<dd>Set this to true if you have a right-to-left page. Default: <b>false</b></dd>
 	<dt>isAllowed (function)</dt>
-	<dd>You can specify a custom function to verify if a drop location is allowed. Default: <b>function(parent, item) { return true; }</b></dd>
+	<dd>You can specify a custom function to verify if a drop location is allowed. Default: <b>function(placeholder, placeholderParent, currentItem) { return true; }</b></dd>
 </dl>
 
 ## Custom Methods
@@ -112,7 +112,7 @@ jQuery UI Sortable 1.8+
 
 ## Browser Compatibility
 
-Tested with: IE 6/7/8, Firefox 3.6/4, Chrome, Safari 3
+Tested with: IE 7/8/9, Firefox, Chrome, Safari
 
 ## License
 
