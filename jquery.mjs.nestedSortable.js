@@ -54,9 +54,11 @@
 				this.lastPositionAbs = this.positionAbs;
 			}
 
+			var o = this.options;
+
 			//Do scrolling
 			if(this.options.scroll) {
-				var o = this.options, scrolled = false;
+				var scrolled = false;
 				if(this.scrollParent[0] != document && this.scrollParent[0].tagName != 'HTML') {
 
 					if((this.overflowOffset.top + this.scrollParent[0].offsetHeight) - event.pageY < o.scrollSensitivity)
