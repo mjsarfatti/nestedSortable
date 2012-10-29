@@ -1,6 +1,7 @@
 # nestedSortable jQuery plugin
 
-*nestedSortable* is a jQuery plugin that extends jQuery Sortable UI functionalities to nested lists.
+*nestedSortable* is a jQuery plugin that extends jQuery Sortable UI functionalities to nested lists.  
+*Note: **Version 2.0** is published in branch '2.0alpha' and is ready for testing! At the moment it has only been tested in Firefox and Chrome, if you work with IE feel free to give it a shot and let me know if something goes wrong.*
 
 ## Features
 
