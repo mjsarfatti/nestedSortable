@@ -29,7 +29,7 @@
 		},
 
 		_create: function() {
-			this.element.data('sortable', this.element.data('nestedSortable'));
+			this.element.data('ui-sortable', this.element.data('mjs-nestedSortable'));
 
 			if (!this.element.is(this.options.listType))
 				throw new Error('nestedSortable: Please check the listType option is set to your actual list type');
