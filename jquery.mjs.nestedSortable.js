@@ -529,4 +529,10 @@
 	}));
 
 	$.mjs.nestedSortable.prototype.options = $.extend({}, $.ui.sortable.prototype.options, $.mjs.nestedSortable.prototype.options);
+	
+	$.ui.isOverAxis =  $.ui.isOverAxis || function( x, reference, size ) {
+	    //Determines when x coordinate is over "b" element axis
+	    return ( x > reference ) && ( x < ( reference + size ) );
+	};
+	
 })(jQuery);
