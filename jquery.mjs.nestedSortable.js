@@ -13,6 +13,10 @@
 
 (function($) {
 
+  function isOverAxis( x, reference, size ) {
+	  return ( x > reference ) && ( x < ( reference + size ) );
+  }
+
 	$.widget("mjs.nestedSortable", $.extend({}, $.ui.sortable.prototype, {
 
 		options: {
@@ -222,7 +226,7 @@
 			var newList = document.createElement(o.listType);
 
 			this.beyondMaxLevels = 0;
-			
+
 			// mjs - if the item is moved to the left, send it one level up but only if it's at the bottom of the list
 			if (parentItem != null && nextItem == null &&
 					(o.rtl && (this.positionAbs.left + this.helper.outerWidth() > parentItem.offset().left + parentItem.outerWidth()) ||
@@ -312,9 +316,9 @@
 
 			var half = this.options.isTree ? .8 : .5;
 
-			var isOverBottomHalf = $.ui.isOverAxis(this.positionAbs.top + this.offset.click.top, item.top + (item.height*half), item.height),
-				isOverTopHalf = $.ui.isOverAxis(this.positionAbs.top + this.offset.click.top, item.top - (item.height*half), item.height),
-				isOverRightHalf = $.ui.isOverAxis(this.positionAbs.left + this.offset.click.left, item.left + (item.width/2), item.width),
+			var isOverBottomHalf = isOverAxis(this.positionAbs.top + this.offset.click.top, item.top + (item.height*half), item.height),
+				isOverTopHalf = isOverAxis(this.positionAbs.top + this.offset.click.top, item.top - (item.height*half), item.height),
+				isOverRightHalf = isOverAxis(this.positionAbs.left + this.offset.click.left, item.left + (item.width/2), item.width),
 				verticalDirection = this._getDragVerticalDirection(),
 				horizontalDirection = this._getDragHorizontalDirection();
 
@@ -477,7 +481,7 @@
 
 			if (this.options.listType) {
 				var list = item.closest(this.options.listType);
-				while (list && list.length > 0 && 
+				while (list && list.length > 0 &&
                     	!list.is('.ui-sortable')) {
 					level++;
 					list = list.parent().closest(this.options.listType);
