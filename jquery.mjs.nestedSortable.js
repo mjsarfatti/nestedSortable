@@ -42,7 +42,7 @@
 		},
 
 		_create: function() {
-			this.element.data('sortable', this.element.data('nestedSortable'));
+			this.element.data('ui-sortable', this.element.data('mjs-nestedSortable'));
 
 			// mjs - prevent browser from freezing if the HTML is not correct
 			if (!this.element.is(this.options.listType))
