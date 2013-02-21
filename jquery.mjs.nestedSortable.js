@@ -72,9 +72,13 @@
 
 		destroy: function() {
 			this.element
-				.removeData("nestedSortable")
-				.unbind(".nestedSortable");
-			return $.ui.sortable.prototype.destroy.apply(this, arguments);
+				.removeData("mjs-nestedSortable")
+				.removeData("ui-sortable");
+			return $.ui.sortable.prototype._destroy.apply(this, arguments);
+		},
+
+		_destroy: function() {
+			return this.destroy();
 		},
 
 		_mouseDrag: function(event) {
