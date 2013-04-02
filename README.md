@@ -73,7 +73,7 @@ Also, the default list type is `<ol>`.
 	<dt>maxLevels</dt>
 	<dd>The maximum depth of nested items the list can accept. If set to '0' the levels are unlimited. Default: <b>0</b></dd>
 	<dt>protectRoot</dt>
-	<dd>Wether to protect the root level (i.e. root items can be sorted but not nested, sub-items cannot become root items). Default: <b>false</b></dd>
+	<dd>Whether to protect the root level (i.e. root items can be sorted but not nested, sub-items cannot become root items). Default: <b>false</b></dd>
 	<dt>rootID</dt>
 	<dd>The id given to the root element (set this to whatever suits your data structure). Default: <b>null</b></dd>
 	<dt>rtl</dt>
