@@ -148,7 +148,7 @@ jQuery UI Sortable 1.10+ (might work with 1.9, but not tested)
 
 ## Browser Compatibility
 
-Tested with: Firefox, Chrome
+Tested with: Firefox, Chrome  
 **NOTE: This is still an alpha version, please test thoroughly in whichever version of IE you target**
 
 ## License
