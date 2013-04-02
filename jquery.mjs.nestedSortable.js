@@ -203,7 +203,14 @@
 						$(itemElement).removeClass(o.hoveringClass);
 						this.hovering && window.clearTimeout(this.hovering);
 						this.hovering = null;
-						this._rearrange(event, item);
+
+						// mjs - do not switch container if it's a root item and 'protectRoot' is true
+						if ( ! (o.protectRoot
+								&& this.currentItem[0].parentNode == this.element[0]
+								&& itemElement.parentNode != this.element[0])
+						) {
+							this._rearrange(event, item);
+						}
 					} else {
 						break;
 					}
@@ -255,9 +262,13 @@
 			this.beyondMaxLevels = 0;
 
 			// mjs - if the item is moved to the left, send it one level up but only if it's at the bottom of the list
-			if (parentItem != null && nextItem == null &&
-					(o.rtl && (this.positionAbs.left + this.helper.outerWidth() > parentItem.offset().left + parentItem.outerWidth()) ||
-					!o.rtl && (this.positionAbs.left < parentItem.offset().left))) {
+			if (parentItem != null
+				&& nextItem == null
+				&& ! (o.protectRoot && parentItem.parentNode == this.element[0])
+				&&
+					(o.rtl && (this.positionAbs.left + this.helper.outerWidth() > parentItem.offset().left + parentItem.outerWidth())
+					 || ! o.rtl && (this.positionAbs.left < parentItem.offset().left))
+			) {
 
 				parentItem.after(this.placeholder[0]);
 				if (o.isTree && parentItem.children(o.listItem).children('li:visible:not(.ui-sortable-helper)').length < 1) {
@@ -268,11 +279,16 @@
 				this._trigger("change", event, this._uiHash());
 			}
 			// mjs - if the item is below a sibling and is moved to the right, make it a child of that sibling
-			else if (previousItem != null &&
-					 	!previousItem.hasClass(o.disableNestingClass) &&
-						(previousItem.children(o.listType).length && previousItem.children(o.listType).is(':visible') || !previousItem.children(o.listType).length) &&
-						(o.rtl && (this.positionAbs.left + this.helper.outerWidth() < previousItem.offset().left + previousItem.outerWidth() - o.tabSize) ||
-						!o.rtl && (this.positionAbs.left > previousItem.offset().left + o.tabSize))) {
+			else if (previousItem != null
+					 && ! previousItem.hasClass(o.disableNestingClass)
+					 &&
+						(previousItem.children(o.listType).length && previousItem.children(o.listType).is(':visible')
+						 || ! previousItem.children(o.listType).length)
+					 && ! (o.protectRoot && this.currentItem[0].parentNode == this.element[0])
+					 &&
+						(o.rtl && (this.positionAbs.left + this.helper.outerWidth() < previousItem.offset().left + previousItem.outerWidth() - o.tabSize)
+						 || ! o.rtl && (this.positionAbs.left > previousItem.offset().left + o.tabSize))
+			) {
 
 				this._isAllowed(previousItem, level, level+childLevels+1);
 
@@ -535,13 +551,11 @@
 
 		_isAllowed: function(parentItem, level, levels) {
 			var o = this.options,
-				isRoot = $(this.currentItem[0].parentNode).hasClass('ui-sortable') ? true : false,
 				maxLevels = this.placeholder.closest('.ui-sortable').nestedSortable('option', 'maxLevels'); // this takes into account the maxLevels set to the recipient list
 
 			// mjs - is the root protected?
 			// mjs - are we nesting too deep?
-			if (!o.isAllowed(this.placeholder, parentItem, this.currentItem) ||
-				o.protectRoot && (parentItem == null && !isRoot || isRoot && level > 1)) {
+			if ( ! o.isAllowed(this.placeholder, parentItem, this.currentItem)) {
 					this.placeholder.addClass(o.errorClass);
 					if (maxLevels < levels && maxLevels != 0) {
 						this.beyondMaxLevels = levels - maxLevels;
