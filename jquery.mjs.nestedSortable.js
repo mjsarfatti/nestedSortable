@@ -144,6 +144,16 @@
 			this.hovering = this.hovering ? this.hovering : null;
 			this.mouseentered = this.mouseentered ? this.mouseentered : false;
 
+			// mjs - let's start caching some variables
+			var parentItem = (this.placeholder[0].parentNode.parentNode &&
+							 $(this.placeholder[0].parentNode.parentNode).closest('.ui-sortable').length)
+				       			? $(this.placeholder[0].parentNode.parentNode)
+				       			: null,
+			    level = this._getLevel(this.placeholder),
+			    childLevels = this._getChildLevels(this.helper);
+
+			var newList = document.createElement(o.listType);
+
 			//Rearrange
 			for (i = this.items.length - 1; i >= 0; i--) {
 
@@ -205,10 +215,29 @@
 						this.hovering = null;
 
 						// mjs - do not switch container if it's a root item and 'protectRoot' is true
-						if ( ! (o.protectRoot
-								&& this.currentItem[0].parentNode == this.element[0]
-								&& itemElement.parentNode != this.element[0])
+						// or if it's not a root item but we are trying to make it root
+						if (o.protectRoot
+							&& ! (this.currentItem[0].parentNode == this.element[0] // it's a root item
+								  && itemElement.parentNode != this.element[0]) // it's intersecting a non-root item
 						) {
+							if (this.currentItem[0].parentNode != this.element[0]
+							   	&& itemElement.parentNode == this.element[0]
+							) {
+
+								if ( ! $(itemElement).children(o.listType).length) {
+									itemElement.appendChild(newList);
+									o.isTree && $(itemElement).removeClass(o.leafClass).addClass(o.branchClass + ' ' + o.expandedClass);
+								}
+
+								var a = this.direction === "down" ? $(itemElement).prev().children(o.listType) : $(itemElement).children(o.listType);
+								if (a[0] !== undefined) {
+									this._rearrange(event, null, a);
+								}
+
+							} else {
+								this._rearrange(event, item);
+							}
+						} else if ( ! o.protectRoot) {
 							this._rearrange(event, item);
 						}
 					} else {
@@ -222,14 +251,6 @@
 					break;
 				}
 			}
-
-			// mjs - let's start caching some variables
-			var parentItem = (this.placeholder[0].parentNode.parentNode &&
-							 $(this.placeholder[0].parentNode.parentNode).closest('.ui-sortable').length)
-				       			? $(this.placeholder[0].parentNode.parentNode)
-				       			: null,
-			    level = this._getLevel(this.placeholder),
-			    childLevels = this._getChildLevels(this.helper);
 
 			// mjs - to find the previous sibling in the list, keep backtracking until we hit a valid list item.
 			var previousItem = this.placeholder[0].previousSibling ? $(this.placeholder[0].previousSibling) : null;
@@ -257,14 +278,12 @@
 				}
 			}
 
-			var newList = document.createElement(o.listType);
-
 			this.beyondMaxLevels = 0;
 
 			// mjs - if the item is moved to the left, send it one level up but only if it's at the bottom of the list
 			if (parentItem != null
 				&& nextItem == null
-				&& ! (o.protectRoot && parentItem.parentNode == this.element[0])
+				&& ! (o.protectRoot && parentItem[0].parentNode == this.element[0])
 				&&
 					(o.rtl && (this.positionAbs.left + this.helper.outerWidth() > parentItem.offset().left + parentItem.outerWidth())
 					 || ! o.rtl && (this.positionAbs.left < parentItem.offset().left))
@@ -372,6 +391,16 @@
 			} else {
 				return verticalDirection && ((verticalDirection == "down" && isOverBottomHalf) || (verticalDirection == "up" && isOverTopHalf));
 			}
+
+		},
+
+		_contactContainers: function(event) {
+
+			if (this.options.protectRoot && this.currentItem[0].parentNode == this.element[0] ) {
+				return;
+			}
+
+			$.ui.sortable.prototype._contactContainers.apply(this, arguments);
 
 		},
 
