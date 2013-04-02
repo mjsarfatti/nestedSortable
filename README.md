@@ -144,12 +144,12 @@ Also, the default list type is `<ol>`.
 
 ## Requirements
 
-jQuery 1.4+  
-jQuery UI Sortable 1.8+
+jQuery UI Sortable 1.10+ (might work with 1.9, but not tested)
 
 ## Browser Compatibility
 
-Tested with: IE 7/8/9, Firefox, Chrome, Safari
+Tested with: Firefox, Chrome
+**NOTE: This is still an alpha version, please test thoroughly in whichever version of IE you target**
 
 ## License
 
