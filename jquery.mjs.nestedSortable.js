@@ -49,7 +49,9 @@
 				throw new Error('nestedSortable: Please check that the listType option is set to your actual list type');
 
 			// mjs - force 'intersect' tolerance method if we have a tree with expanding/collapsing functionality
-			if (this.options.isTree) this.options.tolerance = 'intersect';
+			if (this.options.isTree && this.options.expandOnHover) {
+				this.options.tolerance = 'intersect';
+			}
 
 			$.ui.sortable.prototype._create.apply(this, arguments);
 
