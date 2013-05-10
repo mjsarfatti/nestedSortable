@@ -448,6 +448,7 @@
 		},
 
 		toHierarchy: function(options) {
+
 			var o = $.extend({}, this.options, options),
 				sDepth = o.startDepthCount || 0,
 			    ret = [];
@@ -476,6 +477,7 @@
 
 				return ret;
 			}
+
 		},
 
 		toArray: function(options) {
