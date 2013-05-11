@@ -449,9 +449,7 @@
 
 		toHierarchy: function(options) {
 
-			var o = $.extend({}, this.options, options),
-			    ret = [];
-
+			var o = $.extend({}, this.options, options);
 			var elems = $(this.element).children(o.items);
 
 			return _recursiveItems(elems);
