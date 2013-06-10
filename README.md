@@ -82,6 +82,8 @@ Also, the default list type is `<ol>`.
 	<dd>Set this to true if you want the plugin to collapse the tree on page load. Default: <b>false</b></dd>
 	<dt>tabSize</dt>
 	<dd>How far right or left (in pixels) the item has to travel in order to be nested or to be sent outside its current list. Default: <b>20</b></dd>
+	<dt>excludeRoot</dt>
+	<dd>Exlude the root item from the <code>toArray</code> output</dd>
 </dl>
 
 ## Custom Classes (you will set them in the options as well)
