@@ -1,3 +1,7 @@
+**DEVELOPER NEEDED**
+**I'm sorry to say that I am not able to keep the pace developing this project anymore. I know how much nestedSortable is important for web applications, and I still can't understand why it's not part of jQuery-UI. I also think the base of the plugin is very strong, and deserves much more attention and involvement. If anybody is willing to take this project, please say so [here](https://github.com/mjsarfatti/nestedSortable/issues/95).**  
+**Thank you.**
+
 # nestedSortable jQuery plugin
 
 *nestedSortable* is a jQuery plugin that extends jQuery Sortable UI functionalities to nested lists.  
