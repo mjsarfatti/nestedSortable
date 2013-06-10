@@ -481,15 +481,18 @@
 			var o = $.extend({}, this.options, options),
 				sDepth = o.startDepthCount || 0,
 			    ret = [],
-			    left = 2;
+			    left = 1;
 
-			ret.push({
-				"item_id": o.rootID,
-				"parent_id": 'none',
-				"depth": sDepth,
-				"left": '1',
-				"right": ($(o.items, this.element).length + 1) * 2
-			});
+			if (!o.excludeRoot) {
+				ret.push({
+					"item_id": o.rootID,
+					"parent_id": null,
+					"depth": sDepth,
+					"left": left,
+					"right": ($(o.items, this.element).length + 1) * 2
+				});
+				left++
+			}
 
 			$(this.element).children(o.items).each(function () {
 				left = _recursiveArray(this, sDepth + 1, left);
