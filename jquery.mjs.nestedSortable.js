@@ -450,7 +450,6 @@
 		toHierarchy: function(options) {
 
 			var o = $.extend({}, this.options, options),
-				sDepth = o.startDepthCount || 0,
 			    ret = [];
 
 			$(this.element).children(o.items).each(function () {
