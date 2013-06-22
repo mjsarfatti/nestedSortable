@@ -210,7 +210,10 @@
 				    // Allow hover behavior without switching css classes.
 					if (o.hoverCallback && o.expandOnHover && !this.hovering) {
 					    var self = this, item = itemElement;
-					    this.hovering = window.setTimeout(function () { o.hoverCallback.call(self, item); }, o.expandOnHover);
+					    this.hovering = window.setTimeout(function () {
+					        if (o.hoverCallback.call(self, item) === true)
+					            self.refreshPositions();
+					    }, o.expandOnHover);
 					}
 
 					this.direction = intersection == 1 ? "down" : "up";
