@@ -14,7 +14,7 @@
 (function($) {
 
 	function isOverAxis( x, reference, size ) {
-		return ( x > reference ) && ( x < ( reference + size ) );
+		return ( x >= reference ) && ( x < ( reference + size ) );
 	}
 
 	$.widget("mjs.nestedSortable", $.extend({}, $.ui.sortable.prototype, {
@@ -22,6 +22,7 @@
 		options: {
 			doNotClear: false,
 			expandOnHover: 700,
+			hoverCallback: null,
 			isAllowed: function(placeholder, placeholderParent, originalItem) { return true; },
 			isTree: false,
 			listType: 'ol',
@@ -206,6 +207,15 @@
 						}
 					}
 
+				    // Allow hover behavior without switching css classes.
+					if (o.hoverCallback && o.expandOnHover && !this.hovering) {
+					    var self = this, item = itemElement;
+					    this.hovering = window.setTimeout(function () {
+					        if (o.hoverCallback.call(self, item) === true)
+					            self.refreshPositions();
+					    }, o.expandOnHover);
+					}
+
 					this.direction = intersection == 1 ? "down" : "up";
 
 					// mjs - rearrange the elements and reset timeouts and hovering state
@@ -380,7 +390,7 @@
 		// mjs - this function is slightly modified to make it easier to hover over a collapsed element and have it expand
 		_intersectsWithSides: function(item) {
 
-			var half = this.options.isTree ? .8 : .5;
+			var half = this.options.isTree || this.options.hoverCallback ? .8 : .5;
 
 			var isOverBottomHalf = isOverAxis(this.positionAbs.top + this.offset.click.top, item.top + (item.height*half), item.height),
 				isOverTopHalf = isOverAxis(this.positionAbs.top + this.offset.click.top, item.top - (item.height*half), item.height),
