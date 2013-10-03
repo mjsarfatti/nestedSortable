@@ -68,7 +68,7 @@
 					} else {
 						$li.addClass(self.options.leafClass);
 					}
-				})
+				});
 			}
 		},
 
