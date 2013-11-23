@@ -25,6 +25,7 @@
 			protectRoot: false,
 			rootID: null,
 			rtl: false,
+			noSubLevel :false,
 			isAllowed: function(item, parent) { return true; }
 		},
 
@@ -168,7 +169,7 @@
 			var newList = document.createElement(o.listType);
 
 			this.beyondMaxLevels = 0;
-			
+		if(o.noSubLevel==false){
 			// If the item is moved to the left, send it to its parent's level unless there are siblings below it.
 			if (parentItem != null && nextItem == null &&
 					(o.rtl && (this.positionAbs.left + this.helper.outerWidth() > parentItem.offset().left + parentItem.outerWidth()) ||
@@ -198,6 +199,7 @@
 			else {
 				this._isAllowed(parentItem, level, level+childLevels);
 			}
+		}
 
 			//Post events to containers
 			this._contactContainers(event);
