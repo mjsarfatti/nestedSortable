@@ -179,6 +179,27 @@
 					continue;
 				}
 
+				// No action if intersected item is disabled 
+				// and the element above or below in the direction we're going is also disabled
+				if (itemElement.className.indexOf(o.disabledClass) !== -1) {
+					// Note: intersection hardcoded direction values from jquery.ui.sortable.js:_intersectsWithPointer
+					if (intersection === 2) {
+						// Going down
+						var itemAfter = this.items[i + 1];
+						if (itemAfter && itemAfter.item[0].className.indexOf(o.disabledClass) !== -1){
+							continue;
+						}
+						
+					}
+					else if (intersection === 1) {
+						// Going up
+						var itemBefore = this.items[i - 1];
+						if (itemBefore && itemBefore.item[0].className.indexOf(o.disabledClass) !== -1){
+							continue;
+						}
+					}
+				}
+
 				// cannot intersect with itself
 				// no useless actions that have been done before
 				// no action if the item moved is the parent of the item checked
