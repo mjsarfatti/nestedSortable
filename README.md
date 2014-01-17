@@ -109,6 +109,8 @@ Also, the default list type is `<ol>`.
 	<dd>Given to collapsed branches when dragging an item over them. Default: <b>mjs-nestedSortable-hovering</b></dd>
 	<dt>leafClass (2.0)<dt>
 	<dd>Given to items that do not have children. Default: <b>mjs-nestedSortable-leaf</b></dd>
+	<dt>disabledClass (2.0)<dt>
+	<dd>Given to items that should be skipped when sorting over them. For example, non-visible items that are still part of the list. Default: <b>mjs-nestedSortable-disabled</b></dd>
 </dl>
 
 ## Custom Methods
