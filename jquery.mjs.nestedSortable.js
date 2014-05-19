@@ -398,6 +398,14 @@
 			this.hovering = null;
 
 			$.ui.sortable.prototype._mouseStop.apply(this, arguments);
+			
+			var pid = $(this.domPosition.parent).parent().attr("id");
+			var sort = this.domPosition.prev ? $(this.domPosition.prev).next().index() : 0;
+			
+			if(!(pid == this._uiHash().item.parent().parent().attr("id") && 
+				sort == this._uiHash().item.index())) {
+				this._trigger("relocate", event, this._uiHash());
+			}
 
 		},
 
