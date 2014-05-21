@@ -61,7 +61,7 @@ Please note: every `<li>` must have either one or two direct children, the first
 
 Also, the default list type is `<ol>`.
 
-*This is the bare minimum to have a working nestedSortable. Check the [demo](http://mjsarfatti.com/sandbox/nestedSortable) out to see what can be accomplished with a little more.*
+*This is the bare minimum to have a working nestedSortable. Check the [demo](http://htmlpreview.github.io/?https://raw.githubusercontent.com/ilikenwf/nestedSortable/2.0alpha/example.html) out to see what can be accomplished with a little more.*
 
 ## Custom Options
 
