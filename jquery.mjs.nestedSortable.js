@@ -20,6 +20,7 @@
 	$.widget("mjs.nestedSortable", $.extend({}, $.ui.sortable.prototype, {
 
 		options: {
+			disableParentChange: false,
 			doNotClear: false,
 			expandOnHover: 700,
 			isAllowed: function(placeholder, placeholderParent, originalItem) { return true; },
@@ -619,9 +620,15 @@
 			var o = this.options,
 				maxLevels = this.placeholder.closest('.ui-sortable').nestedSortable('option', 'maxLevels'); // this takes into account the maxLevels set to the recipient list
 
+			 // Check if the parent has changed to prevent it, when o.disableParentChange is true
+			var oldParent = this.currentItem.parent().parent();
+			var disabledByParentchange = o.disableParentChange && (
+				parentItem !== null && !oldParent.is(parentItem)//From somewhere to somewhere else, except the root
+			||	parentItem === null && oldParent.is('li')	//From somewhere to the root
+			);
 			// mjs - is the root protected?
 			// mjs - are we nesting too deep?
-			if ( ! o.isAllowed(this.placeholder, parentItem, this.currentItem)) {
+			if (disabledByParentchange || ! o.isAllowed(this.placeholder, parentItem, this.currentItem)) {
 					this.placeholder.addClass(o.errorClass);
 					if (maxLevels < levels && maxLevels != 0) {
 						this.beyondMaxLevels = levels - maxLevels;
