@@ -22,6 +22,7 @@ Also:
 - All jQuery Sortable options, events and methods are available
 - It is possible to define elements that will not accept a new nested item/list and a maximum depth for nested items
 - The root level can be protected
+- The parentship of items can be locked, just as if it was a family tree. 
 
 ## Usage
 
@@ -60,6 +61,8 @@ Also, the default list type is `<ol>`.
 ## Custom Options
 
 <dl>
+	<dt>disableParentChange (2.0)</dt>
+	<dd>Set this to true to lock the parentship of items. They can only be re-ordered within theire current parent container.</dd>
 	<dt>doNotClear (2.0)</dt>
 	<dd>Set this to true if you don't want empty lists to be removed. Default: <b>false</b></dd>
 	<dt>expandOnHover (2.0)</dt>
