@@ -1,7 +1,7 @@
 /*
  * jQuery UI Nested Sortable
- * v 1.3.5 / 21 jun 2012
- * http://mjsarfatti.com/code/nestedSortable
+ * v 1.3.6 / 21 jun 2012
+ * https://github.com/mjsarfatti/nestedSortable
  *
  * Depends on:
  *	 jquery.ui.sortable.js 1.8+
@@ -237,7 +237,14 @@
 			}
 
 			$.ui.sortable.prototype._mouseStop.apply(this, arguments);
-
+			
+			var pid = $(this.domPosition.parent).parent().attr("id");
+			var sort = this.domPosition.prev ? $(this.domPosition.prev).next().index() : 0;
+			
+			if(!(pid == this._uiHash().item.parent().parent().attr("id") && 
+				sort == this._uiHash().item.index())) {
+			this._trigger("relocate", event, this._uiHash());
+			}
 		},
 
 		serialize: function(options) {

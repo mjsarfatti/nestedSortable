@@ -109,6 +109,19 @@ Also, the default list type is `<ol>`.
 	Similarly to <code>toArray</code>, it accepts <b>attribute</b> and <b>expression</b> options.</dd>
 </dl>
 
+## Events
+
+<dl>
+        <dt>change</dt>
+        <dd>Fires when the item is dragged to a new location.  This triggers for each location it is dragged into not just the ending location.
+        <dt>sort</dt>
+        <dd>Fires when the item is dragged.</dd>
+        <dt>revert</dt>
+        <dd>Fires once the object has moved if the new location is invalid.</dd>
+        <dt>relocate</dt>
+        <dd>Only fires once when the item is done bing moved at its final location.</dd>
+</dl>
+
 ## Known Bugs
 
 *nestedSortable* doesn't work properly with connected draggables, because of the way Draggable simulates Sortable `mouseStart` and `mouseStop` events. This bug might or might not be fixed some time in the future (it's not specific to this plugin).
