@@ -283,9 +283,20 @@
 			return ret;
 
 			function _recursiveItems(item) {
+				var dataItems = [];
+				
+				$(item).data().each(function(index, value) {
+					dataItems[index] = value;
+				});
+
 				var id = ($(item).attr(o.attribute || 'id') || '').match(o.expression || (/(.+)[-=_](.+)/));
 				if (id) {
 					var currentItem = {"id" : id[2]};
+
+					for(var prop in dataItems) {
+						currentItem[prop] = dataItems[prop]
+					}
+
 					if ($(item).children(o.listType).children(o.items).length > 0) {
 						currentItem.children = [];
 						$(item).children(o.listType).children(o.items).each(function() {
