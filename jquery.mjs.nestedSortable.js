@@ -1,7 +1,7 @@
 /*
  * jQuery UI Nested Sortable
  * v 1.3.5 / 21 jun 2012
- * http://mjsarfatti.com/code/nestedSortable
+ * http://github.com/mjsarfatti/nestedSortable/
  *
  * Depends on:
  *	 jquery.ui.sortable.js 1.8+
