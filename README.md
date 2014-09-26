@@ -57,9 +57,9 @@ Also, the default list type is `<ol>`.
 	<dt>tabSize</dt>
 	<dd>How far right or left (in pixels) the item has to travel in order to be nested or to be sent outside its current list. Default: <b>20</b></dd>
 	<dt>disableNesting</dt>
-	<dd>The class name of the items that will not accept nested lists. Default: <b>ui-nestedSortable-no-nesting</b></dd>
+	<dd>The class name of the items that will not accept nested lists. Default: <b>mjs-nestedSortable-no-nesting</b></dd>
 	<dt>errorClass</dt>
-	<dd>The class given to the placeholder in case of error. Default: <b>ui-nestedSortable-error</b></dd>
+	<dd>The class given to the placeholder in case of error. Default: <b>mjs-nestedSortable-error</b></dd>
 	<dt>listType</dt>
 	<dd>The list type used (ordered or unordered). Default: <b>ol</b></dd>
 	<dt>maxLevels</dt>
