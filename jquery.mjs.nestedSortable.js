@@ -352,7 +352,9 @@
 						$(itemElement).mouseleave();
 						this.mouseentered = false;
 						$(itemElement).removeClass(o.hoveringClass);
-						this.hovering && window.clearTimeout(this.hovering);
+						if (this.hovering) {
+							window.clearTimeout(this.hovering);
+						}
 						this.hovering = null;
 
 						// mjs - do not switch container if
@@ -556,7 +558,7 @@
 
 		},
 
-		_mouseStop: function(event, noPropagation) {
+		_mouseStop: function(event) {
 			var pid,
 				sort;
 
@@ -581,7 +583,9 @@
 				.removeClass(this.options.hoveringClass);
 
 			this.mouseentered = false;
-			this.hovering && window.clearTimeout(this.hovering);
+			if (this.hovering) {
+				window.clearTimeout(this.hovering);
+			}
 			this.hovering = null;
 
 			$.ui.sortable.prototype._mouseStop.apply(this, arguments);
@@ -633,7 +637,7 @@
 
 		},
 
-		_contactContainers: function(event) {
+		_contactContainers: function() {
 
 			if (this.options.protectRoot && this.currentItem[0].parentNode === this.element[0] ) {
 				return;
@@ -643,7 +647,7 @@
 
 		},
 
-		_clear: function(event, noPropagation) {
+		_clear: function() {
 			var i,
 				item;
 
@@ -694,7 +698,6 @@
 		toHierarchy: function(options) {
 
 			var o = $.extend({}, this.options, options),
-				sDepth = o.startDepthCount || 0,
 			    ret = [];
 
 			$(this.element).children(o.items).each(function() {
@@ -739,7 +742,7 @@
 					"left": left,
 					"right": ($(o.items, this.element).length + 1) * 2
 				});
-				left++
+				left++;
 			}
 
 			$(this.element).children(o.items).each(function() {
@@ -750,9 +753,9 @@
 
 			return ret;
 
-			function _recursiveArray(item, depth, left) {
+			function _recursiveArray(item, depth, _left) {
 
-				var right = left + 1,
+				var right = _left + 1,
 				    id,
 				    pid,
 				    parentItem;
@@ -782,13 +785,13 @@
 							"item_id": id[2],
 							"parent_id": pid,
 							"depth": depth,
-							"left": left,
+							"left": _left,
 							"right": right
 						});
 				}
 
-				left = right + 1;
-				return left;
+				_left = right + 1;
+				return _left;
 			}
 
 		},
