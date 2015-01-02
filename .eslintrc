@@ -4,6 +4,8 @@
 		"document": false
 	},
 	"rules": {
-		"no-underscore-dangle": false
+		"no-underscore-dangle": false,
+		"no-loop-func": false,
+		"no-use-before-define": false
 	}
 }
