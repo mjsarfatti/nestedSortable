@@ -2,5 +2,8 @@
 	"globals": {
 		"window": false,
 		"document": false
+	},
+	"rules": {
+		"no-underscore-dangle": false
 	}
 }
