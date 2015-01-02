@@ -147,7 +147,7 @@
 
 			//Do scrolling
 			if (this.options.scroll) {
-				if (this.scrollParent[0] != document && this.scrollParent[0].tagName != "HTML") {
+				if (this.scrollParent[0] !== document && this.scrollParent[0].tagName !== "HTML") {
 
 					if (
 						(
@@ -307,7 +307,7 @@
 					}
 				}
 
-				method = intersection == 1 ? "next" : "prev";
+				method = intersection === 1 ? "next" : "prev";
 
 				// cannot intersect with itself
 				// no useless actions that have been done before
@@ -345,10 +345,10 @@
 						}
 					}
 
-					this.direction = intersection == 1 ? "down" : "up";
+					this.direction = intersection === 1 ? "down" : "up";
 
 					// mjs - rearrange the elements and reset timeouts and hovering state
-					if (this.options.tolerance == "pointer" || this._intersectsWithSides(item)) {
+					if (this.options.tolerance === "pointer" || this._intersectsWithSides(item)) {
 						$(itemElement).mouseleave();
 						this.mouseentered = false;
 						$(itemElement).removeClass(o.hoveringClass);
@@ -360,14 +360,14 @@
 						// or if it's not a root item but we are trying to make it root
 						if (o.protectRoot &&
 							!(
-								this.currentItem[0].parentNode == this.element[0] &&
+								this.currentItem[0].parentNode === this.element[0] &&
 								// it's a root item
-								itemElement.parentNode != this.element[0]
+								itemElement.parentNode !== this.element[0]
 								// it's intersecting a non-root item
 							)
 						) {
-							if (this.currentItem[0].parentNode != this.element[0] &&
-								itemElement.parentNode == this.element[0]
+							if (this.currentItem[0].parentNode !== this.element[0] &&
+								itemElement.parentNode === this.element[0]
 							) {
 
 								if ( !$(itemElement).children(o.listType).length) {
@@ -420,10 +420,10 @@
 
 			if (previousItem != null) {
 				while (
-					previousItem[0].nodeName.toLowerCase() != "li" ||
+					previousItem[0].nodeName.toLowerCase() !== "li" ||
 					previousItem[0].className.indexOf(o.disabledClass) !== -1 ||
-					previousItem[0] == this.currentItem[0] ||
-					previousItem[0] == this.helper[0]
+					previousItem[0] === this.currentItem[0] ||
+					previousItem[0] === this.helper[0]
 				) {
 					if (previousItem[0].previousSibling) {
 						previousItem = $(previousItem[0].previousSibling);
@@ -447,10 +447,10 @@
 
 			if (nextItem != null) {
 				while (
-					nextItem[0].nodeName.toLowerCase() != "li" ||
+					nextItem[0].nodeName.toLowerCase() !== "li" ||
 					nextItem[0].className.indexOf(o.disabledClass) !== -1 ||
-					nextItem[0] == this.currentItem[0] ||
-					nextItem[0] == this.helper[0]
+					nextItem[0] === this.currentItem[0] ||
+					nextItem[0] === this.helper[0]
 				) {
 					if (nextItem[0].nextSibling) {
 						nextItem = $(nextItem[0].nextSibling);
@@ -467,7 +467,7 @@
 			// but only if it's at the bottom of the list
 			if (parentItem != null &&
 				nextItem == null &&
-				o.protectRoot && parentItem[0].parentNode != this.element[0] &&
+				o.protectRoot && parentItem[0].parentNode !== this.element[0] &&
 				(
 					o.rtl &&
 					(
@@ -501,7 +501,7 @@
 					previousItem.children(o.listType).is(":visible") ||
 					!previousItem.children(o.listType).length
 				) &&
-				!(o.protectRoot && this.currentItem[0].parentNode == this.element[0]) &&
+				!(o.protectRoot && this.currentItem[0].parentNode === this.element[0]) &&
 				(
 					o.rtl &&
 					(
@@ -589,8 +589,8 @@
 			pid = $(this.domPosition.parent).parent().attr("id");
 			sort = this.domPosition.prev ? $(this.domPosition.prev).next().index() : 0;
 
-			if (!(pid == this._uiHash().item.parent().parent().attr("id") &&
-				sort == this._uiHash().item.index())) {
+			if (!(pid === this._uiHash().item.parent().parent().attr("id") &&
+				sort === this._uiHash().item.index())) {
 				this._trigger("relocate", event, this._uiHash());
 			}
 
@@ -621,13 +621,13 @@
 
 			if (this.floating && horizontalDirection) {
 				return (
-					(horizontalDirection == "right" && isOverRightHalf) ||
-					(horizontalDirection == "left" && !isOverRightHalf)
+					(horizontalDirection === "right" && isOverRightHalf) ||
+					(horizontalDirection === "left" && !isOverRightHalf)
 				);
 			} else {
 				return verticalDirection && (
-					(verticalDirection == "down" && isOverBottomHalf) ||
-					(verticalDirection == "up" && isOverTopHalf)
+					(verticalDirection === "down" && isOverBottomHalf) ||
+					(verticalDirection === "up" && isOverTopHalf)
 				);
 			}
 
@@ -635,7 +635,7 @@
 
 		_contactContainers: function(event) {
 
-			if (this.options.protectRoot && this.currentItem[0].parentNode == this.element[0] ) {
+			if (this.options.protectRoot && this.currentItem[0].parentNode === this.element[0] ) {
 				return;
 			}
 
@@ -878,13 +878,13 @@
 				!o.isAllowed(this.placeholder, parentItem, this.currentItem)
 			) {
 				this.placeholder.addClass(o.errorClass);
-				if (maxLevels < levels && maxLevels != 0) {
+				if (maxLevels < levels && maxLevels !== 0) {
 					this.beyondMaxLevels = levels - maxLevels;
 				} else {
 					this.beyondMaxLevels = 1;
 				}
 			} else {
-				if (maxLevels < levels && maxLevels != 0) {
+				if (maxLevels < levels && maxLevels !== 0) {
 					this.placeholder.addClass(o.errorClass);
 					this.beyondMaxLevels = levels - maxLevels;
 				} else {
