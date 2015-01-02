@@ -11,6 +11,10 @@
  * http://www.opensource.org/licenses/mit-license.php
  */
 (function( factory ) {
+	"use strict";
+
+	var define = window.define;
+
 	if ( typeof define === "function" && define.amd ) {
 
 		// AMD. Register as an anonymous module.
@@ -21,9 +25,10 @@
 	} else {
 
 		// Browser globals
-		factory( jQuery );
+		factory( window.jQuery );
 	}
 }(function($) {
+	"use strict";
 
 	function isOverAxis( x, reference, size ) {
 		return ( x > reference ) && ( x < ( reference + size ) );
@@ -35,7 +40,7 @@
 			disableParentChange: false,
 			doNotClear: false,
 			expandOnHover: 700,
-			isAllowed: function(placeholder, placeholderParent, originalItem) { return true; },
+			isAllowed: function() { return true; },
 			isTree: false,
 			listType: "ol",
 			maxLevels: 0,
@@ -111,7 +116,11 @@
 		},
 
 		_mouseDrag: function(event) {
-			var i, item, itemElement, intersection,
+			var i,
+				item,
+				itemElement,
+				intersection,
+				self = this,
 				o = this.options,
 				scrolled = false,
 				$document = $(document),
