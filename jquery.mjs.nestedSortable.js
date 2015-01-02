@@ -665,12 +665,12 @@
 
 			var o = $.extend({}, this.options, options),
 				items = this._getItemsAsjQuery(o && o.connected),
-			    str = [];
+				str = [];
 
 			$(items).each(function() {
 				var res = ($(o.item || this).attr(o.attribute || "id") || "")
 						.match(o.expression || (/(.+)[-=_](.+)/)),
-				    pid = ($(o.item || this).parent(o.listType)
+					pid = ($(o.item || this).parent(o.listType)
 						.parent(o.items)
 						.attr(o.attribute || "id") || "")
 						.match(o.expression || (/(.+)[-=_](.+)/));
@@ -698,7 +698,7 @@
 		toHierarchy: function(options) {
 
 			var o = $.extend({}, this.options, options),
-			    ret = [];
+				ret = [];
 
 			$(this.element).children(o.items).each(function() {
 				var level = _recursiveItems(this);
@@ -731,8 +731,8 @@
 
 			var o = $.extend({}, this.options, options),
 				sDepth = o.startDepthCount || 0,
-			    ret = [],
-			    left = 1;
+				ret = [],
+				left = 1;
 
 			if (!o.excludeRoot) {
 				ret.push({
@@ -756,9 +756,9 @@
 			function _recursiveArray(item, depth, _left) {
 
 				var right = _left + 1,
-				    id,
-				    pid,
-				    parentItem;
+					id,
+					pid,
+					parentItem;
 
 				if ($(item).children(o.listType).children(o.items).length > 0) {
 					depth++;
@@ -774,9 +774,9 @@
 					pid = o.rootID;
 				} else {
 					parentItem = ($(item).parent(o.listType)
-											 .parent(o.items)
-											 .attr(o.attribute || "id"))
-											 .match(o.expression || (/(.+)[-=_](.+)/));
+											.parent(o.items)
+											.attr(o.attribute || "id"))
+											.match(o.expression || (/(.+)[-=_](.+)/));
 					pid = parentItem[2];
 				}
 
@@ -848,8 +848,8 @@
 
 		_getChildLevels: function(parent, depth) {
 			var self = this,
-			    o = this.options,
-			    result = 0;
+				o = this.options,
+				result = 0;
 			depth = depth || 0;
 
 			$(parent).children(o.listType).children(o.items).each(function(index, child) {
@@ -867,7 +867,7 @@
 					.closest(".ui-sortable")
 					.nestedSortable("option", "maxLevels"),
 
-			 // Check if the parent has changed to prevent it, when o.disableParentChange is true
+				// Check if the parent has changed to prevent it, when o.disableParentChange is true
 				oldParent = this.currentItem.parent().parent(),
 				disabledByParentchange = o.disableParentChange && (
 					//From somewhere to somewhere else, except the root
