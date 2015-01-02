@@ -37,7 +37,7 @@
 			expandOnHover: 700,
 			isAllowed: function(placeholder, placeholderParent, originalItem) { return true; },
 			isTree: false,
-			listType: 'ol',
+			listType: "ol",
 			maxLevels: 0,
 			protectRoot: false,
 			rootID: null,
@@ -45,26 +45,26 @@
 			startCollapsed: false,
 			tabSize: 20,
 
-			branchClass: 'mjs-nestedSortable-branch',
-			collapsedClass: 'mjs-nestedSortable-collapsed',
-			disableNestingClass: 'mjs-nestedSortable-no-nesting',
-			errorClass: 'mjs-nestedSortable-error',
-			expandedClass: 'mjs-nestedSortable-expanded',
-			hoveringClass: 'mjs-nestedSortable-hovering',
-			leafClass: 'mjs-nestedSortable-leaf',
-			disabledClass: 'mjs-nestedSortable-disabled'
+			branchClass: "mjs-nestedSortable-branch",
+			collapsedClass: "mjs-nestedSortable-collapsed",
+			disableNestingClass: "mjs-nestedSortable-no-nesting",
+			errorClass: "mjs-nestedSortable-error",
+			expandedClass: "mjs-nestedSortable-expanded",
+			hoveringClass: "mjs-nestedSortable-hovering",
+			leafClass: "mjs-nestedSortable-leaf",
+			disabledClass: "mjs-nestedSortable-disabled"
 		},
 
 		_create: function() {
-			this.element.data('ui-sortable', this.element.data('mjs-nestedSortable'));
+			this.element.data("ui-sortable", this.element.data("mjs-nestedSortable"));
 
 			// mjs - prevent browser from freezing if the HTML is not correct
 			if (!this.element.is(this.options.listType))
-				throw new Error('nestedSortable: Please check that the listType option is set to your actual list type');
+				throw new Error("nestedSortable: Please check that the listType option is set to your actual list type");
 
 			// mjs - force 'intersect' tolerance method if we have a tree with expanding/collapsing functionality
 			if (this.options.isTree && this.options.expandOnHover) {
-				this.options.tolerance = 'intersect';
+				this.options.tolerance = "intersect";
 			}
 
 			$.ui.sortable.prototype._create.apply(this, arguments);
@@ -110,7 +110,7 @@
 
 			//Do scrolling
 			if(this.options.scroll) {
-				if(this.scrollParent[0] != document && this.scrollParent[0].tagName != 'HTML') {
+				if(this.scrollParent[0] != document && this.scrollParent[0].tagName != "HTML") {
 
 					if((this.overflowOffset.top + this.scrollParent[0].offsetHeight) - event.pageY < o.scrollSensitivity) {
 						this.scrollParent[0].scrollTop = scrolled = this.scrollParent[0].scrollTop + o.scrollSpeed;
@@ -164,7 +164,7 @@
 
 			// mjs - let's start caching some variables
 			var parentItem = (this.placeholder[0].parentNode.parentNode &&
-							 $(this.placeholder[0].parentNode.parentNode).closest('.ui-sortable').length)
+							 $(this.placeholder[0].parentNode.parentNode).closest(".ui-sortable").length)
 				       			? $(this.placeholder[0].parentNode.parentNode)
 				       			: null,
 			    level = this._getLevel(this.placeholder),
@@ -265,7 +265,7 @@
 
 								if ( ! $(itemElement).children(o.listType).length) {
 									itemElement.appendChild(newList);
-									o.isTree && $(itemElement).removeClass(o.leafClass).addClass(o.branchClass + ' ' + o.expandedClass);
+									o.isTree && $(itemElement).removeClass(o.leafClass).addClass(o.branchClass + " " + o.expandedClass);
 								}
 
 								var a = this.direction === "down" ? $(itemElement).prev().children(o.listType) : $(itemElement).children(o.listType);
@@ -294,7 +294,7 @@
 			// mjs - to find the previous sibling in the list, keep backtracking until we hit a valid list item.
 			var previousItem = this.placeholder[0].previousSibling ? $(this.placeholder[0].previousSibling) : null;
 			if (previousItem != null) {
-				while (previousItem[0].nodeName.toLowerCase() != 'li' || previousItem[0].className.indexOf(o.disabledClass) !== -1 || previousItem[0] == this.currentItem[0] || previousItem[0] == this.helper[0]) {
+				while (previousItem[0].nodeName.toLowerCase() != "li" || previousItem[0].className.indexOf(o.disabledClass) !== -1 || previousItem[0] == this.currentItem[0] || previousItem[0] == this.helper[0]) {
 					if (previousItem[0].previousSibling) {
 						previousItem = $(previousItem[0].previousSibling);
 					} else {
@@ -307,7 +307,7 @@
 			// mjs - to find the next sibling in the list, keep stepping forward until we hit a valid list item.
 			var nextItem = this.placeholder[0].nextSibling ? $(this.placeholder[0].nextSibling) : null;
 			if (nextItem != null) {
-				while (nextItem[0].nodeName.toLowerCase() != 'li' || nextItem[0].className.indexOf(o.disabledClass) !== -1 || nextItem[0] == this.currentItem[0] || nextItem[0] == this.helper[0]) {
+				while (nextItem[0].nodeName.toLowerCase() != "li" || nextItem[0].className.indexOf(o.disabledClass) !== -1 || nextItem[0] == this.currentItem[0] || nextItem[0] == this.helper[0]) {
 					if (nextItem[0].nextSibling) {
 						nextItem = $(nextItem[0].nextSibling);
 					} else {
@@ -329,8 +329,8 @@
 			) {
 
 				parentItem.after(this.placeholder[0]);
-				if (o.isTree && parentItem.children(o.listItem).children('li:visible:not(.ui-sortable-helper)').length < 1) {
-					parentItem.removeClass(this.options.branchClass + ' ' + this.options.expandedClass)
+				if (o.isTree && parentItem.children(o.listItem).children("li:visible:not(.ui-sortable-helper)").length < 1) {
+					parentItem.removeClass(this.options.branchClass + " " + this.options.expandedClass)
 							  .addClass(this.options.leafClass);
 				}
 				this._clearEmpty(parentItem[0]);
@@ -340,7 +340,7 @@
 			else if (previousItem != null
 					 && ! previousItem.hasClass(o.disableNestingClass)
 					 &&
-						(previousItem.children(o.listType).length && previousItem.children(o.listType).is(':visible')
+						(previousItem.children(o.listType).length && previousItem.children(o.listType).is(":visible")
 						 || ! previousItem.children(o.listType).length)
 					 && ! (o.protectRoot && this.currentItem[0].parentNode == this.element[0])
 					 &&
@@ -352,7 +352,7 @@
 
 				if (!previousItem.children(o.listType).length) {
 					previousItem[0].appendChild(newList);
-					o.isTree && previousItem.removeClass(o.leafClass).addClass(o.branchClass + ' ' + o.expandedClass);
+					o.isTree && previousItem.removeClass(o.leafClass).addClass(o.branchClass + " " + o.expandedClass);
 				}
 
 		        // mjs - if this item is being moved from the top, add it to the top of the list.
@@ -379,7 +379,7 @@
 			}
 
 			//Call callbacks
-			this._trigger('sort', event, this._uiHash());
+			this._trigger("sort", event, this._uiHash());
 
 			this.lastPositionAbs = this.positionAbs;
 			return false;
@@ -405,7 +405,7 @@
 
 
 			// mjs - clear the hovering timeout, just to be sure
-			$('.'+this.options.hoveringClass).mouseleave().removeClass(this.options.hoveringClass);
+			$("."+this.options.hoveringClass).mouseleave().removeClass(this.options.hoveringClass);
 			this.mouseentered = false;
 			this.hovering && window.clearTimeout(this.hovering);
 			this.hovering = null;
@@ -470,25 +470,25 @@
 			    str = [];
 
 			$(items).each(function() {
-				var res = ($(o.item || this).attr(o.attribute || 'id') || '')
+				var res = ($(o.item || this).attr(o.attribute || "id") || "")
 						.match(o.expression || (/(.+)[-=_](.+)/)),
 				    pid = ($(o.item || this).parent(o.listType)
 						.parent(o.items)
-						.attr(o.attribute || 'id') || '')
+						.attr(o.attribute || "id") || "")
 						.match(o.expression || (/(.+)[-=_](.+)/));
 
 				if (res) {
-					str.push(((o.key || res[1]) + '[' + (o.key && o.expression ? res[1] : res[2]) + ']')
-						+ '='
+					str.push(((o.key || res[1]) + "[" + (o.key && o.expression ? res[1] : res[2]) + "]")
+						+ "="
 						+ (pid ? (o.key && o.expression ? pid[1] : pid[2]) : o.rootID));
 				}
 			});
 
 			if(!str.length && o.key) {
-				str.push(o.key + '=');
+				str.push(o.key + "=");
 			}
 
-			return str.join('&');
+			return str.join("&");
 
 		},
 
@@ -506,7 +506,7 @@
 			return ret;
 
 			function _recursiveItems(item) {
-				var id = ($(item).attr(o.attribute || 'id') || '').match(o.expression || (/(.+)[-=_](.+)/));
+				var id = ($(item).attr(o.attribute || "id") || "").match(o.expression || (/(.+)[-=_](.+)/));
 				if (id) {
 					var currentItem = {"id" : id[2]};
 					if ($(item).children(o.listType).children(o.items).length > 0) {
@@ -561,14 +561,14 @@
 					depth --;
 				}
 
-				id = ($(item).attr(o.attribute || 'id')).match(o.expression || (/(.+)[-=_](.+)/));
+				id = ($(item).attr(o.attribute || "id")).match(o.expression || (/(.+)[-=_](.+)/));
 
 				if (depth === sDepth + 1) {
 					pid = o.rootID;
 				} else {
 					var parentItem = ($(item).parent(o.listType)
 											 .parent(o.items)
-											 .attr(o.attribute || 'id'))
+											 .attr(o.attribute || "id"))
 											 .match(o.expression || (/(.+)[-=_](.+)/));
 					pid = parentItem[2];
 				}
@@ -589,12 +589,12 @@
 			var emptyList = $(item).children(o.listType);
 
 			if (emptyList.length && !emptyList.children().length && !o.doNotClear) {
-				o.isTree && $(item).removeClass(o.branchClass + ' ' + o.expandedClass).addClass(o.leafClass);
+				o.isTree && $(item).removeClass(o.branchClass + " " + o.expandedClass).addClass(o.leafClass);
 				emptyList.remove();
-			} else if (o.isTree && emptyList.length && emptyList.children().length && emptyList.is(':visible')) {
-				$(item).removeClass(o.leafClass).addClass(o.branchClass + ' ' + o.expandedClass);
-			} else if (o.isTree && emptyList.length && emptyList.children().length && !emptyList.is(':visible')) {
-				$(item).removeClass(o.leafClass).addClass(o.branchClass + ' ' + o.collapsedClass);
+			} else if (o.isTree && emptyList.length && emptyList.children().length && emptyList.is(":visible")) {
+				$(item).removeClass(o.leafClass).addClass(o.branchClass + " " + o.expandedClass);
+			} else if (o.isTree && emptyList.length && emptyList.children().length && !emptyList.is(":visible")) {
+				$(item).removeClass(o.leafClass).addClass(o.branchClass + " " + o.collapsedClass);
 			}
 
 		},
@@ -606,7 +606,7 @@
 			if (this.options.listType) {
 				var list = item.closest(this.options.listType);
 				while (list && list.length > 0 &&
-                    	!list.is('.ui-sortable')) {
+                    	!list.is(".ui-sortable")) {
 					level++;
 					list = list.parent().closest(this.options.listType);
 				}
@@ -630,13 +630,13 @@
 
 		_isAllowed: function(parentItem, level, levels) {
 			var o = this.options,
-				maxLevels = this.placeholder.closest('.ui-sortable').nestedSortable('option', 'maxLevels'); // this takes into account the maxLevels set to the recipient list
+				maxLevels = this.placeholder.closest(".ui-sortable").nestedSortable("option", "maxLevels"); // this takes into account the maxLevels set to the recipient list
 
 			 // Check if the parent has changed to prevent it, when o.disableParentChange is true
 			var oldParent = this.currentItem.parent().parent();
 			var disabledByParentchange = o.disableParentChange && (
 				parentItem !== null && !oldParent.is(parentItem)//From somewhere to somewhere else, except the root
-			||	parentItem === null && oldParent.is('li')	//From somewhere to the root
+			||	parentItem === null && oldParent.is("li")	//From somewhere to the root
 			);
 			// mjs - is the root protected?
 			// mjs - are we nesting too deep?
