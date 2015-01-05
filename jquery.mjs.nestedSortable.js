@@ -255,7 +255,7 @@
 			// mjs - let's start caching some variables
 			(function() {
 				var _parentItem = this.placeholder.parent().parent();
-				if (_parentItem && parentItem.closest(".ui-sortable").length) {
+				if (_parentItem && _parentItem.closest(".ui-sortable").length) {
 					parentItem = _parentItem;
 				}
 			}());
