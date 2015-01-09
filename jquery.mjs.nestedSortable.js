@@ -255,10 +255,10 @@
 			// mjs - let's start caching some variables
 			(function() {
 				var _parentItem = this.placeholder.parent().parent();
-				if (_parentItem && parentItem.closest(".ui-sortable").length) {
+				if (_parentItem && _parentItem.closest(".ui-sortable").length) {
 					parentItem = _parentItem;
 				}
-			}());
+			}.call(this));
 
 			level = this._getLevel(this.placeholder);
 			childLevels = this._getChildLevels(this.helper);
@@ -418,7 +418,7 @@
 				} else {
 					previousItem = null;
 				}
-			}());
+			}.call(this));
 
 			if (previousItem != null) {
 				while (
@@ -445,7 +445,7 @@
 				} else {
 					nextItem = null;
 				}
-			}());
+			}.call(this));
 
 			if (nextItem != null) {
 				while (
