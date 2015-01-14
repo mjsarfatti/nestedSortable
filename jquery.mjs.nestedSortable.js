@@ -559,9 +559,6 @@
 		},
 
 		_mouseStop: function(event) {
-			var pid,
-				sort;
-
 			// mjs - if the item is in a position not allowed, send it back
 			if (this.beyondMaxLevels) {
 
@@ -588,16 +585,10 @@
 			}
 			this.hovering = null;
 
-			$.ui.sortable.prototype._mouseStop.apply(this, arguments);
-
-			pid = $(this.domPosition.parent).parent().attr("id");
-			sort = this.domPosition.prev ? $(this.domPosition.prev).next().index() : 0;
-
-			if (!(pid === this._uiHash().item.parent().parent().attr("id") &&
-				sort === this._uiHash().item.index())) {
-				this._trigger("relocate", event, this._uiHash());
-			}
-
+			this._relocate_event = event;
+			this._pid_current = $(this.domPosition.parent).parent().attr("id");
+			this._sort_current = this.domPosition.prev ? $(this.domPosition.prev).next().index() : 0;
+			$.ui.sortable.prototype._mouseStop.apply(this, arguments); //asybnchronous execution, @see _clear for the relocate event.
 		},
 
 		// mjs - this function is slightly modified
@@ -653,6 +644,12 @@
 
 			$.ui.sortable.prototype._clear.apply(this, arguments);
 
+			//relocate event
+			if (!(this._pid_current === this._uiHash().item.parent().parent().attr("id") &&
+				this._sort_current === this._uiHash().item.index())) {
+				this._trigger("relocate", this._relocate_event, this._uiHash());
+			}
+			
 			// mjs - clean last empty ul/ol
 			for (i = this.items.length - 1; i >= 0; i--) {
 				item = this.items[i].item[0];
