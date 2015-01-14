@@ -585,16 +585,10 @@
 			}
 			this.hovering = null;
 
-			var oldParent = this.currentItem.parent();
-			var oldIndex = this.currentItem.index();
-			$.ui.sortable.prototype._mouseStop.apply(this, arguments);
-			//see ui.sortable js; this.currentItem is now moved.
-			var newParent = this.currentItem.parent();
-			var currentIndex = this.currentItem.index();
-			if (!(oldParent.is(newParent) && oldIndex == currentIndex)) {
-				this._trigger("relocate", event, this._uiHash());
-			}
-
+			this._relocate_event = event;
+			this._pid_current = $(this.domPosition.parent).parent().attr("id");
+			this._sort_current = this.domPosition.prev ? $(this.domPosition.prev).next().index() : 0;
+			$.ui.sortable.prototype._mouseStop.apply(this, arguments); //asybnchronous execution, @see _clear for the relocate event.
 		},
 
 		// mjs - this function is slightly modified
@@ -650,6 +644,12 @@
 
 			$.ui.sortable.prototype._clear.apply(this, arguments);
 
+			//relocate event
+			if (!(this._pid_current === this._uiHash().item.parent().parent().attr("id") &&
+				this._sort_current === this._uiHash().item.index())) {
+				this._trigger("relocate", this._relocate_event, this._uiHash());
+			}
+			
 			// mjs - clean last empty ul/ol
 			for (i = this.items.length - 1; i >= 0; i--) {
 				item = this.items[i].item[0];
