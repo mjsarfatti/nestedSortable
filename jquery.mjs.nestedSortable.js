@@ -469,7 +469,7 @@
 			// but only if it's at the bottom of the list
 			if (parentItem != null &&
 				nextItem == null &&
-				o.protectRoot && parentItem[0].parentNode !== this.element[0] &&
+				!(o.protectRoot && parentItem[0].parentNode == this.element[0]) &&
 				(
 					o.rtl &&
 					(
