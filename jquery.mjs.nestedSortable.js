@@ -382,9 +382,9 @@
 								}
 
 								if (this.direction === "down") {
-									$(itemElement).prev().children(o.listType);
+									a = $(itemElement).prev().children(o.listType);
 								} else {
-									$(itemElement).children(o.listType);
+									a = $(itemElement).children(o.listType);
 								}
 
 								if (a[0] !== undefined) {
