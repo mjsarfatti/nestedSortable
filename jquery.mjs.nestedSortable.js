@@ -484,7 +484,7 @@
 				parentItem.after(this.placeholder[0]);
 				helperIsNotSibling = !parentItem
 											.children(o.listItem)
-											.children("li:visible:not(.ui-sortable-helper")
+											.children("li:visible:not(.ui-sortable-helper)")
 											.length;
 				if (o.isTree && helperIsNotSibling) {
 					parentItem
