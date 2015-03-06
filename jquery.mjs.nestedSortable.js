@@ -537,6 +537,7 @@
 					previousItem.children(o.listType)[0].appendChild(this.placeholder[0]);
 				}
 
+				this._clearEmpty(parentItem[0]);
 				this._trigger("change", event, this._uiHash());
 			} else {
 				this._isAllowed(parentItem, level, level + childLevels);
