@@ -491,8 +491,8 @@
 						.removeClass(this.options.branchClass + " " + this.options.expandedClass)
 						.addClass(this.options.leafClass);
 				}
-
-				this._clearEmpty(parentItem[0]);
+                if(typeof parentItem !== 'undefined')
+				    this._clearEmpty(parentItem[0]);
 				this._trigger("change", event, this._uiHash());
 				// mjs - if the item is below a sibling and is moved to the right,
 				// make it a child of that sibling
@@ -536,8 +536,8 @@
 					// mjs - otherwise, add it to the bottom of the list.
 					previousItem.children(o.listType)[0].appendChild(this.placeholder[0]);
 				}
-
-				this._clearEmpty(parentItem[0]);
+                if(typeof parentItem !== 'undefined')
+				    this._clearEmpty(parentItem[0]);
 				this._trigger("change", event, this._uiHash());
 			} else {
 				this._isAllowed(parentItem, level, level + childLevels);
