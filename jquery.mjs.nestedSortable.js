@@ -869,8 +869,8 @@
 				oldParent = this.currentItem.parent().parent(),
 				disabledByParentchange = o.disableParentChange && (
 					//From somewhere to somewhere else, except the root
-					parentItem !== null && !oldParent.is(parentItem) ||
-					parentItem === null && oldParent.is("li")	//From somewhere to the root
+					typeof parentItem !== 'undefined' && !oldParent.is(parentItem) ||
+					typeof parentItem === 'undefined' && oldParent.is("li")	//From somewhere to the root
 				);
 			// mjs - is the root protected?
 			// mjs - are we nesting too deep?
