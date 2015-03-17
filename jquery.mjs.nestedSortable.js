@@ -794,40 +794,37 @@
 
 		},
 
-		_clearEmpty: function(item) {
-			var o = this.options,
-				emptyList = $(item).children(o.listType);
-
-			if (emptyList.length && !emptyList.children().length && !o.doNotClear) {
-				if (o.isTree) {
-					$(item)
-						.removeClass(o.branchClass + " " + o.expandedClass)
-						.addClass(o.leafClass);
+		_clearEmpty: function (item) {
+			function replaceClass(elem, search, replace, swap) {
+				if (swap) {
+					search = [replace, replace = search][0];
 				}
-
-				emptyList.remove();
-			} else if (
-				o.isTree &&
-				emptyList.length &&
-				emptyList.children().length &&
-				emptyList.is(":visible")
-			) {
-				$(item)
-					.removeClass(o.leafClass)
-					.addClass(o.branchClass + " " + o.expandedClass);
-			} else if (
-				o.isTree &&
-				emptyList.length &&
-				emptyList.children().length &&
-				!emptyList.is(":visible")
-			) {
-				$(item)
-					.removeClass(o.leafClass)
-					.addClass(o.branchClass + " " + o.collapsedClass);
+		
+				$(elem).removeClass(search).addClass(replace);
 			}
-
+		
+			var o = this.options,
+				childrenList = $(item).children(o.listType),
+				hasChildren = childrenList.is(':not(:empty)');
+		
+			var doNotClear =
+				o.doNotClear ||
+				hasChildren ||
+				o.protectRoot && $(item)[0] === this.element[0];
+		
+			if (o.isTree) {
+				replaceClass(item, o.branchClass, o.leafClass, doNotClear);
+		
+				if (doNotClear && hasChildren) {
+					replaceClass(item, o.collapsedClass, o.expandedClass);
+				}
+			}
+		
+			if (!doNotClear) {
+				childrenList.remove();
+			}
 		},
-
+		
 		_getLevel: function(item) {
 
 			var level = 1,
