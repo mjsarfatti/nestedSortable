@@ -245,7 +245,7 @@
 				this.helper[0].style.left = this.position.left + "px";
 			}
 			if (!this.options.axis || this.options.axis !== "x") {
-				this.helper[0].style.top = this.position.top + "px";
+				this.helper[0].style.top = (this.position.top + window.scrollY) + "px";
 			}
 
 			// mjs - check and reset hovering state at each cycle
@@ -650,7 +650,7 @@
 				this._sort_current === this._uiHash().item.index())) {
 				this._trigger("relocate", this._relocate_event, this._uiHash());
 			}
-			
+
 			// mjs - clean last empty ul/ol
 			for (i = this.items.length - 1; i >= 0; i--) {
 				item = this.items[i].item[0];
@@ -799,32 +799,32 @@
 				if (swap) {
 					search = [replace, replace = search][0];
 				}
-		
+
 				$(elem).removeClass(search).addClass(replace);
 			}
-		
+
 			var o = this.options,
 				childrenList = $(item).children(o.listType),
 				hasChildren = childrenList.is(':not(:empty)');
-		
+
 			var doNotClear =
 				o.doNotClear ||
 				hasChildren ||
 				o.protectRoot && $(item)[0] === this.element[0];
-		
+
 			if (o.isTree) {
 				replaceClass(item, o.branchClass, o.leafClass, doNotClear);
-		
+
 				if (doNotClear && hasChildren) {
 					replaceClass(item, o.collapsedClass, o.expandedClass);
 				}
 			}
-		
+
 			if (!doNotClear) {
 				childrenList.remove();
 			}
 		},
-		
+
 		_getLevel: function(item) {
 
 			var level = 1,
