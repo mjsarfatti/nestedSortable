@@ -1,10 +1,10 @@
 Package.describe({
-  name: 'andyp22:nested-sortable',
+  name: 'ilikenwf:nested-sortable',
   version: '0.0.1',
   // Brief, one-line summary of the package.
   summary: 'A jQuery plugin that extends Sortable UI functionalities to nested lists.',
   // URL to the Git repository containing the source code for this package.
-  git: 'https://github.com/andyp22/nestedSortable',
+  git: 'https://github.com/ilikenwf/nestedSortable',
   // By default, Meteor will default to using README.md for documentation.
   // To avoid submitting documentation, set this field to null.
   documentation: 'README.md'

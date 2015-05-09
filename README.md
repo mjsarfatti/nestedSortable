@@ -4,7 +4,7 @@
 *Note: Version 2.0 is published in branch '2.0alpha' and is available for testing. At the moment it has only been tested in Firefox and Chrome, if you work with IE feel free to give it a shot and let me know if something goes wrong.*
 
 ## Meteor Installation
-    meteor add andyp22:nested-sortable
+    meteor add ilikenwf:nested-sortable
 
 ## What's new in version 2.0
 
