@@ -23,6 +23,6 @@ Package.onUse(function(api) {
 
 Package.onTest(function(api) {
   api.use('tinytest');
-  api.use('andyp22:nested-sortable');
+  api.use('ilikenwf:nested-sortable');
   api.addFiles('meteor/nested-sortable-tests.js');
 });
