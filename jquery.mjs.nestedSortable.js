@@ -245,7 +245,7 @@
 				this.helper[0].style.left = this.position.left + "px";
 			}
 			if (!this.options.axis || this.options.axis !== "x") {
-				this.helper[0].style.top = (this.position.top + window.scrollY) + "px";
+				this.helper[0].style.top = (this.position.top) + "px";
 			}
 
 			// mjs - check and reset hovering state at each cycle
