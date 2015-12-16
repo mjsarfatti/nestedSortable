@@ -144,7 +144,9 @@ Also, the default list type is `<ol>`.
 '2' ...
 	'id' => itemId
 </pre>
-	Similarly to <code>toArray</code>, it accepts <b>attribute</b> and <b>expression</b> options.</dd>
+	Similarly to <code>toArray</code>, it accepts <b>attribute</b> and <b>expression</b> options.
+	Optionally adding `data-` attributes will cause them to show up in the hierarchy. See demo for example.
+	</dd>
 </dl>
 
 ## Events
