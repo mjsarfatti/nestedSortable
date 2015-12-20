@@ -708,10 +708,18 @@
 			function _recursiveItems(item) {
 				var id = ($(item).attr(o.attribute || "id") || "").match(o.expression || (/(.+)[-=_](.+)/)),
 					currentItem;
+
+				var data = $(item).data();
+				if (data.nestedSortableItem) {
+					delete data.nestedSortableItem; // Remove the nestedSortableItem object from the data
+				}
+
 				if (id) {
 					currentItem = {
 						"id": id[2]
 					};
+
+					currentItem = $.extend({}, currentItem, data); // Combine the two objects
 
 					if ($(item).children(o.listType).children(o.items).length > 0) {
 						currentItem.children = [];
