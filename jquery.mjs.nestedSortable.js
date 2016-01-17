@@ -787,14 +787,14 @@
 				}
 
 				if (id) {
-					        var data = $(item).data();
+					        var name = $(item).data("name");
 						ret.push({
 							"item_id": id[2],
 							"parent_id": pid,
 							"depth": depth,
 							"left": _left,
 							"right": right,
-							"name":data.name
+							"name":name
 						});
 				}
 
