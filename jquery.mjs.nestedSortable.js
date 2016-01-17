@@ -789,7 +789,7 @@
 				if (id) {
 					        var name = $(item).data("name");
 						ret.push({
-							"item_id": id[2],
+							"id": id[2],
 							"parent_id": pid,
 							"depth": depth,
 							"left": _left,
