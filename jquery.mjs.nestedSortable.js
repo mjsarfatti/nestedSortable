@@ -13,8 +13,6 @@
 (function( factory ) {
 	"use strict";
 
-	var define = window.define;
-
 	if ( typeof define === "function" && define.amd ) {
 
 		// AMD. Register as an anonymous module.
