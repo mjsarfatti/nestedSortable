@@ -1,18 +1,14 @@
-**ANNOUNCEMENT**  
-
-**I'm sorry to say that I am not able to keep up the pace in developing this project anymore. I know how much nestedSortable is important for web applications, and I still can't understand why it's not part of jQuery-UI. I also think the base of the plugin is very strong, and deserves much more attention and involvement.**  
-**If anybody is willing to take this project, please say so [here](https://github.com/mjsarfatti/nestedSortable/issues/95).**  
-**Thank you.**
-
 # nestedSortable jQuery plugin
 
 **nestedSortable** is a jQuery plugin that extends jQuery Sortable UI functionalities to nested lists.  
 *Note: Version 2.0 is published in branch '2.0alpha' and is available for testing. At the moment it has only been tested in Firefox and Chrome, if you work with IE feel free to give it a shot and let me know if something goes wrong.*
 
+## Meteor Installation
+    meteor add ilikenwf:nested-sortable
 
 ## What's new in version 2.0
 
-The biggest change is that your nested list can now behave as a tree with expand/collapse funcionality. Simply set `isTree` to **true** in the options and you are good to go! Check the [demo](http://mjsarfatti.com/sandbox/nestedSortable) out to see what can be done with nestedSortable and a little CSS. (Note that all **nestedSortable** does is to assign/remove classes on the fly)  
+The biggest change is that your nested list can now behave as a tree with expand/collapse funcionality. Simply set `isTree` to **true** in the options and you are good to go! Check the [demo](http://ilikenwf.github.io/example.html) out to see what can be done with nestedSortable and a little CSS. (Note that all **nestedSortable** does is to assign/remove classes on the fly)  
 Also:
 - **isAllowed** function finally works as expected, see the docs below
 - Fixed: a small bug in the **protectRoot** function
@@ -28,6 +24,7 @@ Also:
 - All jQuery Sortable options, events and methods are available
 - It is possible to define elements that will not accept a new nested item/list and a maximum depth for nested items
 - The root level can be protected
+- The parentship of items can be locked, just as if it was a family tree. 
 
 ## Usage
 
@@ -61,11 +58,13 @@ Please note: every `<li>` must have either one or two direct children, the first
 
 Also, the default list type is `<ol>`.
 
-*This is the bare minimum to have a working nestedSortable. Check the [demo](http://mjsarfatti.com/sandbox/nestedSortable) out to see what can be accomplished with a little more.*
+*This is the bare minimum to have a working nestedSortable. Check the [demo](http://ilikenwf.github.io/example.html) out to see what can be accomplished with a little more.*
 
 ## Custom Options
 
 <dl>
+	<dt>disableParentChange (2.0)</dt>
+	<dd>Set this to true to lock the parentship of items. They can only be re-ordered within theire current parent container.</dd>
 	<dt>doNotClear (2.0)</dt>
 	<dd>Set this to true if you don't want empty lists to be removed. Default: <b>false</b></dd>
 	<dt>expandOnHover (2.0)</dt>
@@ -109,6 +108,8 @@ Also, the default list type is `<ol>`.
 	<dd>Given to collapsed branches when dragging an item over them. Default: <b>mjs-nestedSortable-hovering</b></dd>
 	<dt>leafClass (2.0)<dt>
 	<dd>Given to items that do not have children. Default: <b>mjs-nestedSortable-leaf</b></dd>
+	<dt>disabledClass (2.0)<dt>
+	<dd>Given to items that should be skipped when sorting over them. For example, non-visible items that are still part of the list. Default: <b>mjs-nestedSortable-disabled</b></dd>
 </dl>
 
 ## Custom Methods
@@ -143,7 +144,21 @@ Also, the default list type is `<ol>`.
 '2' ...
 	'id' => itemId
 </pre>
-	Similarly to <code>toArray</code>, it accepts <b>attribute</b> and <b>expression</b> options.</dd>
+	Similarly to <code>toArray</code>, it accepts <b>attribute</b> and <b>expression</b> options.
+	Optionally adding `data-` attributes will cause them to show up in the hierarchy. See demo for example.
+	</dd>
+</dl>
+
+## Events
+<dl>
+       <dt>change</dt>
+        <dd>Fires when the item is dragged to a new location.  This triggers for each location it is dragged into not just the ending location.
+        <dt>sort</dt>
+        <dd>Fires when the item is dragged.</dd>
+        <dt>revert</dt>
+        <dd>Fires once the object has moved if the new location is invalid.</dd>
+        <dt>relocate</dt>
+        <dd>Only fires once when the item is done bing moved at its final location.</dd>
 </dl>
 
 ## Known Bugs
@@ -163,8 +178,3 @@ Tested with: Firefox, Chrome
 
 This work is licensed under the MIT License.  
 Which means you can do pretty much whatever you want with it.
-
-Nonetheless if this plugin saved you money, saved you time or saved your life please take a moment to think about the work I've been doing for you and consider sharing a bit of your joy with me. Your donation, however small, will be greatly appreciated.  
-Thank you.
-
-[Donate with PayPal](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=RSJEW3N9PRMYY&lc=IT&item_name=Manuele%20Sarfatti&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted)
