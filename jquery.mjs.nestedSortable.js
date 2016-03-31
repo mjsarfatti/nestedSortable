@@ -1,6 +1,6 @@
 /*
  * jQuery UI Nested Sortable
- * v 2.0b1 / 2016-02-04
+ * v 2.0.0 / 2016-03-30 "Not April Fools"
  * https://github.com/ilikenwf/nestedSortable
  *
  * Depends on:
