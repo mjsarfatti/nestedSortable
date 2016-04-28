@@ -785,15 +785,15 @@
 				}
 
 				if (id) {
-					        var name = $(item).data("name");
-						ret.push({
-							"id": id[2],
-							"parent_id": pid,
-							"depth": depth,
-							"left": _left,
-							"right": right,
-							"name":name
-						});
+					var data = $(item).children('div').data();
+					var itemObj = $.extend( data, {
+						"id":id[2],
+						"parent_id":pid,
+						"depth":depth,
+						"left":_left,
+						"right":right
+						} );
+					ret.push( itemObj );
 				}
 
 				_left = right + 1;
@@ -813,7 +813,7 @@
 
 			var o = this.options,
 				childrenList = $(item).children(o.listType),
-				hasChildren = childrenList.is(':not(:empty)');
+				hasChildren = childrenList.has('li').length;
 
 			var doNotClear =
 				o.doNotClear ||
@@ -822,13 +822,10 @@
 
 			if (o.isTree) {
 				replaceClass(item, o.branchClass, o.leafClass, doNotClear);
-
-				if (doNotClear && hasChildren) {
-					replaceClass(item, o.collapsedClass, o.expandedClass);
-				}
 			}
 
 			if (!doNotClear) {
+				childrenList.parent().removeClass(o.expandedClass);
 				childrenList.remove();
 			}
 		},
