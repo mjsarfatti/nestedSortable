@@ -449,31 +449,32 @@
 
 		toHierarchy: function(options) {
 
-			var o = $.extend({}, this.options, options),
-				sDepth = o.startDepthCount || 0,
-			    ret = [];
+			var o = $.extend({}, this.options, options);
+			var elems = $(this.element).children(o.items);
 
-			$(this.element).children(o.items).each(function () {
-				var level = _recursiveItems(this);
-				ret.push(level);
-			});
+			return _recursiveItems(elems);
 
-			return ret;
+			function _recursiveItems(items) {
+				var ret = [];
 
-			function _recursiveItems(item) {
-				var id = ($(item).attr(o.attribute || 'id') || '').match(o.expression || (/(.+)[-=_](.+)/));
-				if (id) {
-					var currentItem = {"id" : id[2]};
-					if ($(item).children(o.listType).children(o.items).length > 0) {
-						currentItem.children = [];
-						$(item).children(o.listType).children(o.items).each(function() {
-							var level = _recursiveItems(this);
-							currentItem.children.push(level);
-						});
+				items.each(function() {
+					var id = ($(this).attr(o.attribute || 'id') || '');
+
+					if (id) {
+						var currentItem = { id : id };
+						var children = $(this).children(o.listType).children(o.items);
+
+						if (children.length != 0) {
+							currentItem.children = _recursiveItems(children);
+						}
+
+						return ret.push(currentItem);
 					}
-					return currentItem;
-				}
+				});
+
+				return ret;
 			}
+
 		},
 
 		toArray: function(options) {
