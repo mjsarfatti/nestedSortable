@@ -338,7 +338,7 @@
 									.addClass(o.expandedClass);
 
 								self.refreshPositions();
-								self._trigger("expand", event, self._uiHash());
+								self._trigger("expand", event, [self._uiHash(), itemElement]);
 							}, o.expandOnHover);
 						}
 					}
