@@ -25,7 +25,10 @@
 			protectRoot: false,
 			rootID: null,
 			rtl: false,
-			isAllowed: function(item, parent) { return true; }
+			isAllowed: function(item, parent) { return true; },
+//The next two options added for placeholder visibility
+            placeholder: 'placeholder',
+            forcePlaceholderSize: true
 		},
 
 		_create: function() {
